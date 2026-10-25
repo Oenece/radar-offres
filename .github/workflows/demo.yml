@@ -1,0 +1,67 @@
+# La démo en ligne : chaque matin, une veille avec le profil et les employeurs d'exemple,
+# publiée sur GitHub Pages. Les offres sont réelles, les critères sont ceux de l'exemple.
+#
+# La mémoire de la démo (vus.json, passages.json) passe d'un jour à l'autre par le cache
+# d'Actions : rien n'est commité. Si le cache expire (7 jours sans passage), la démo
+# repart de zéro, ce qui est sans conséquence.
+name: Démo
+
+on:
+  schedule:
+    - cron: "0 5 * * *"   # 5 h UTC, soit 6 h ou 7 h à Paris
+  workflow_dispatch:       # bouton « Run workflow » dans l'onglet Actions
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: demo
+  cancel-in-progress: false
+
+jobs:
+  veille:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Préparer le dossier de la démo
+        run: |
+          mkdir -p demo
+          cp profil.exemple.toml demo/profil.toml
+          cp employeurs.exemple.csv demo/employeurs.csv
+
+      - name: Reprendre la mémoire de la démo
+        uses: actions/cache/restore@v4
+        with:
+          path: demo/donnees
+          key: demo-${{ github.run_id }}
+          restore-keys: demo-
+
+      - name: Lancer la veille
+        run: python veille.py --profil demo/profil.toml
+
+      - name: Garder la mémoire pour demain
+        uses: actions/cache/save@v4
+        with:
+          path: demo/donnees
+          key: demo-${{ github.run_id }}
+
+      - name: Préparer le site
+        run: |
+          mkdir -p site
+          cp demo/donnees/tableau.html site/index.html
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploiement
+        uses: actions/deploy-pages@v4

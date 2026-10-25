@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veille d'offres</title>
+<style>
+/*CSS*/
+</style>
+</head>
+<body class="ctx-produit">
+
+<nav class="nav-locale">
+  <span class="titre">Veille d'offres</span>
+  <a href="#offres" class="actif">Offres</a>
+  <a href="#main">À la main</a>
+  <a href="#suivis">Employeurs</a>
+  <a href="#passages">Passages</a>
+  <button class="bouton-secondaire reduit" data-bascule-theme type="button">Clair / sombre</button>
+</nav>
+
+<main class="page large">
+
+  <header class="tete">
+    <p class="t-eyebrow accent" id="tete-date"></p>
+    <h1 class="t-headline" id="tete-titre"></h1>
+    <p class="t-intro" id="tete-sous"></p>
+    <div class="grille-chiffres" id="chiffres"></div>
+  </header>
+
+  <section class="liste-offres" id="offres">
+    <div class="barre" id="barre">
+      <div class="barre-ligne">
+        <input class="champ recherche" id="recherche" type="search"
+               placeholder="Employeur, poste, lieu, mot de la fiche" autocomplete="off">
+        <div class="segment" id="f-periode" aria-label="Période">
+          <button value="passage">Dernier passage</button>
+          <button value="30">30 jours</button>
+          <button value="tout" class="actif">Tout</button>
+        </div>
+        <div class="segment" id="f-suivi" aria-label="Suivi">
+          <button value="a-trier" class="actif">À trier</button>
+          <button value="retenue">Retenues</button>
+          <button value="postule">Postulé</button>
+          <button value="ecartee">Écartées</button>
+          <button value="toutes">Toutes</button>
+        </div>
+      </div>
+      <div class="barre-ligne secondaire">
+        <select class="champ petit" id="f-famille" aria-label="Famille d'employeur">
+          <option value="">Toutes les familles</option>
+        </select>
+        <select class="champ petit" id="f-tri" aria-label="Tri">
+          <option value="adequation">Tri : ce qui colle le plus</option>
+          <option value="publication">Tri : publiée récemment</option>
+          <option value="salaire">Tri : salaire le plus haut</option>
+          <option value="employeur">Tri : employeur</option>
+        </select>
+        <label class="pastille-choix"><input type="checkbox" id="f-salaire"> Salaire affiché</label>
+        <label class="pastille-choix"><input type="checkbox" id="f-cible"> Touche <span id="f-cible-texte">la cible</span></label>
+        <label class="pastille-choix"><input type="checkbox" id="f-souple"> Remote ou hybride</label>
+        <label class="pastille-choix"><input type="checkbox" id="f-retirees"> Montrer les retirées</label>
+        <span class="compte" id="compte" aria-live="polite"></span>
+      </div>
+    </div>
+
+    <ol class="offres" id="liste"></ol>
+    <p class="vide" id="vide" hidden>Aucune offre avec ces filtres. <button class="lien plein" id="raz" type="button">Tout remettre</button></p>
+    <p class="note raccourcis">Clavier : <kbd>/</kbd> chercher · <kbd>j</kbd> <kbd>k</kbd> descendre, monter ·
+      <kbd>Entrée</kbd> déplier · <kbd>o</kbd> ouvrir l'offre · <kbd>r</kbd> retenir · <kbd>p</kbd> postulé ·
+      <kbd>x</kbd> écarter · <kbd>u</kbd> remettre à trier</p>
+  </section>
+
+  <section class="section" id="main">
+    <p class="t-eyebrow accent">À la main</p>
+    <h2 class="t-headline-reduit">Ce que le script ne lit pas.</h2>
+    <p class="t-intro contenu-etroit">L'APEC filtre les robots par un captcha, et quelques employeurs n'ont pas de flux public. Un tour par semaine suffit.</p>
+    <div class="grille-tuiles" id="manuels"></div>
+  </section>
+
+  <section class="section" id="suivis">
+    <p class="t-eyebrow accent">Employeurs</p>
+    <h2 class="t-headline-reduit" id="suivis-titre"></h2>
+    <p class="t-intro contenu-etroit">Un clic sur un nom filtre la liste sur lui.</p>
+    <div class="familles" id="familles"></div>
+  </section>
+
+  <section class="section" id="passages">
+    <p class="t-eyebrow accent">Passages</p>
+    <h2 class="t-headline-reduit" id="passages-titre"></h2>
+    <div class="contenu-large">
+      <table class="table-passages">
+        <thead><tr><th>Date</th><th>Heure</th><th class="nombre">Nouvelles</th><th class="nombre">Employeurs lus</th><th>Sources en erreur</th></tr></thead>
+        <tbody id="passages-lignes"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="pied" id="pied"></p>
+</main>
+
+<script id="donnees" type="application/json">/*DONNEES*/</script>
+<script>
+/*JS*/
+</script>
+</body>
+</html>

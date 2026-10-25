@@ -1,0 +1,123 @@
+# Profil de recherche d'exemple : une personne en data / analytics marketing,
+# basée à Lyon, ouverte au télétravail en Europe.
+#
+# Copier ce fichier en profil.toml, puis adapter chaque section.
+# Les motifs sont des expressions régulières Python, cherchées en minuscules :
+# entre apostrophes simples ('...'), la barre oblique inverse s'écrit telle quelle
+# (\b = limite de mot). Un motif qui contient une apostrophe s'écrit entre "..."
+# avec \\ à la place de \.
+
+[fichiers]
+# Chemins relatifs à ce fichier.
+employeurs = 'employeurs.csv'   # la liste des employeurs suivis (voir employeurs.exemple.csv)
+donnees = 'donnees'             # où la veille écrit vus.json, passages.json, offres-*.md, tableau.html
+
+[profil]
+devise = 'EUR'                  # la devise de tes salaires (EUR, GBP, USD, CHF…)
+salaire_cible = [45000, 55000]  # la fourchette visée, en brut annuel
+salaire_bas = 40000             # sous ce maximum affiché, l'offre reçoit « Salaire bas »
+annees_experience = 4           # tes années d'expérience
+annees_alerte = 7               # une offre qui en demande autant ou plus reçoit une alerte
+
+[lieux]
+# Un de ces mots dans le lieu suffit.
+acceptes = ['lyon', 'villeurbanne', 'auvergne-rhône-alpes']
+# Lieux acceptés seulement s'ils sont écrits exactement ainsi (un pays sans ville, par exemple).
+exacts = ['france', 'fr', 'remote france', 'france (remote)']
+# Un poste en télétravail est gardé s'il vise une de ces zones (ou aucune).
+remote_zones = ['europe', 'emea', 'france']
+
+[themes]
+# Un de ces motifs dans le titre suffit à garder l'offre.
+titre = [
+  '\bdata\b',
+  'analytics',
+  'analyste?',
+  'marketing (science|analytics|ops)',
+  'measurement',
+  'insights?',
+  'growth',
+]
+# Les postes d'ingénieur ne sont gardés que si le titre contient aussi un mot de ingenieur_ok.
+ingenieur = 'engineer|ing[ée]nieur|developer|d[ée]veloppeur'
+ingenieur_ok = ['analytics', 'data', 'marketing']
+# Sans thème dans le titre : la description doit contenir un mot de « ia »
+# et au moins metier_minimum mots de « metier ».
+ia = ['\bai\b', '\bia\b', 'machine learning', '\bllm']
+metier = ['\bsql\b', 'dashboard', 'a/b test', 'attribution', 'bigquery', 'looker']
+metier_minimum = 2
+# Un de ces motifs dans le titre écarte l'offre, quoi qu'il arrive.
+exclus_titre = [
+  '\bsales\b',
+  'account executive',
+  '\bintern\b',
+  'internship',
+  '\bstage\b',
+  'alternan',
+  'recruit',
+  'legal',
+]
+
+[score]
+# Le score d'adéquation (0 à 100) donne la rareté de la carte : il mesure à quel point
+# l'offre colle au profil. Il part de base, puis chaque élément ajoute ou retire des points.
+# Le poids d'une règle colle / coince se règle sur la règle (poids = ...), sinon
+# colle_defaut ou coince_defaut. Les valeurs ci-dessous sont celles par défaut.
+base = 40
+colle_defaut = 10
+coince_defaut = -8
+titre = 10                # le titre touche un de tes thèmes
+salaire_cible = 10        # la fourchette affichée atteint le bas de ta cible
+salaire_bas = -15         # le maximum affiché est sous salaire_bas
+par_annee_en_trop = -3    # par année demandée au-delà de annees_experience
+mode_souple = 5           # remote ou hybride
+seuils = { peu_commune = 40, rare = 60, epique = 75, legendaire = 90 }
+
+[alerte]
+# alerte.py envoie un e-mail quand une offre du dernier passage atteint cette rareté :
+# commune, peu_commune, rare, epique ou legendaire.
+rarete_min = 'epique'
+
+[a_la_main]
+# Recherches APEC à lancer soi-même (le site est protégé par un captcha). Laisser vide pour ne rien afficher.
+recherches_apec = ['data analyst marketing', 'analytics engineer']
+
+# « Ce qui colle » : quand le motif apparaît dans l'offre, la phrase s'affiche.
+# Écrire des phrases sur ton parcours : ce sont tes arguments pour ce poste.
+[[colle]]
+motif = '\bsql\b|bigquery|snowflake'
+tag = 'SQL'
+texte = 'SQL au quotidien sur des entrepôts de données'
+poids = 15                # ton point le plus fort : il pèse plus que les autres
+
+[[colle]]
+motif = 'dashboard|looker|tableau|power bi'
+tag = 'Dataviz'
+texte = 'tableaux de bord construits et maintenus pour des équipes marketing'
+
+[[colle]]
+motif = 'a/b test|experimentation|expérimentation'
+tag = 'Tests'
+texte = 'tests A/B conçus et analysés'
+
+[[colle]]
+motif = 'python|pandas'
+tag = 'Python'
+texte = 'Python pour l’analyse et l’automatisation'
+
+# « Ce qui coince » : les écarts avec ton profil, à préparer avant de postuler.
+[[coince]]
+motif = 'spark|scala|kafka'
+tag = 'Big data'
+texte = 'outils big data pas encore pratiqués'
+
+[[coince]]
+motif = 'phd|doctorat'
+tag = 'Doctorat'
+texte = 'doctorat demandé'
+poids = -20               # presque rédhibitoire
+
+[[coince]]
+motif = 'german|allemand|dutch|néerlandais'
+tag = 'Langue'
+texte = 'autre langue que l’anglais demandée'

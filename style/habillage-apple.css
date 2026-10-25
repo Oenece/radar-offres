@@ -1,0 +1,90 @@
+/* Habillage : les couleurs et les polices (tokens), d'après les Human Interface Guidelines d'Apple. */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
+
+:root {
+  --habillage: "apple";
+
+  --marque:        #0071E3;
+  --marque-appui:  #0066CC;
+  --marque-encre:  #1D1D1F;
+
+  --font-sans:  -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --base-size:  14px;
+  --titre-1:    2.857rem;
+  --titre-2:    2rem;
+  --titre-3:    1.5rem;
+  --titre-bloc: 1.5rem;
+
+  --surface-page:   #FFFFFF;
+  --surface-1:      #FFFFFF;
+  --surface-creuse: #F5F5F7;
+  --text-primary:   #1D1D1F;
+  --text-secondary: #6E6E73;
+  --text-muted:     #86868B;
+  --baseline:       #D2D2D7;
+  --hairline:       #D2D2D7;
+  --border:         rgba(0,0,0,0.08);
+  --logo: none;
+
+  --seq-100:#D6E9FF; --seq-200:#A8D0FF; --seq-300:#6FB1FF;
+  --seq-400:#2E8BF0; --seq-500:#0071E3; --seq-600:#0054A8;
+  --ord-1:#8CC1FF; --ord-2:#4A9DF5; --ord-3:#0071E3; --ord-4:#0059B3; --ord-5:#003F80;
+
+  --sec-1:#F2F2F7; --sec-2:#E5E5EA; --sec-3:#D1D1D6;
+  --sec-4:#C7C7CC; --sec-5:#AEAEB2; --sec-6:#8E8E93;
+  --sec-ord-1:#D1D1D6; --sec-ord-2:#AEAEB2; --sec-ord-3:#8E8E93;
+  --sec-ord-4:#636366; --sec-ord-5:#3A3A3C;
+
+  --div-froid-4:#008198; --div-froid-3:#00A9B8; --div-froid-2:#00C3D0; --div-froid-1:#9BE7EE;
+  --div-neutre:#EFEFEF;
+  --div-chaud-1:#FFD9B8; --div-chaud-2:#FFB877; --div-chaud-3:#FF8D28; --div-chaud-4:#C55300;
+
+  --tri-vert-3:#008932; --tri-vert-2:#34C759; --tri-vert-1:#8FE3A6;
+  --tri-neutre:#EFEFEF;
+  --tri-rouge-1:#FFA6A8; --tri-rouge-2:#FF383C; --tri-rouge-3:#E9152D;
+
+  --status-good:     #34C759;
+  --status-warning:  #FFCC00;
+  --status-serious:  #FF8D28;
+  --status-critical: #FF383C;
+  --delta-up:        #008932;
+  --delta-down:      #E9152D;
+
+  --terme-conversion:  "conversions";
+  --terme-conversion2: "leads";
+  --terme-invest:      "investissements";
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    --marque: #2997FF; --marque-appui: #2997FF; --marque-encre: #F5F5F7;
+    --surface-page: #000000; --surface-1: #1D1D1F; --surface-creuse: #161617;
+    --text-primary: #F5F5F7; --text-secondary: #A1A1A6; --text-muted: #86868B;
+    --baseline: #424245; --hairline: #424245; --border: rgba(255,255,255,0.12);
+    --seq-100:#003F80; --seq-200:#0059B3; --seq-300:#0071E3;
+    --seq-400:#2997FF; --seq-500:#6FB9FF; --seq-600:#A8D4FF;
+    --ord-1:#0059B3; --ord-2:#0071E3; --ord-3:#2997FF; --ord-4:#6FB9FF; --ord-5:#A8D4FF;
+    --sec-1:#1C1C1E; --sec-2:#2C2C2E; --sec-3:#3A3A3C;
+    --sec-4:#48484A; --sec-5:#636366; --sec-6:#8E8E93;
+    --sec-ord-1:#3A3A3C; --sec-ord-2:#48484A; --sec-ord-3:#636366; --sec-ord-4:#8E8E93; --sec-ord-5:#AEAEB2;
+    --div-neutre:#3A3A3C; --tri-neutre:#3A3A3C;
+    --status-good:#30D158; --status-warning:#FFD600; --status-serious:#FF9230; --status-critical:#FF4245;
+    --delta-up:#30D158; --delta-down:#FF4245;
+  }
+}
+:root[data-theme="dark"] {
+  --marque: #2997FF; --marque-appui: #2997FF; --marque-encre: #F5F5F7;
+  --surface-page: #000000; --surface-1: #1D1D1F; --surface-creuse: #161617;
+  --text-primary: #F5F5F7; --text-secondary: #A1A1A6; --text-muted: #86868B;
+  --baseline: #424245; --hairline: #424245; --border: rgba(255,255,255,0.12);
+  --seq-100:#003F80; --seq-200:#0059B3; --seq-300:#0071E3;
+  --seq-400:#2997FF; --seq-500:#6FB9FF; --seq-600:#A8D4FF;
+  --ord-1:#0059B3; --ord-2:#0071E3; --ord-3:#2997FF; --ord-4:#6FB9FF; --ord-5:#A8D4FF;
+  --sec-1:#1C1C1E; --sec-2:#2C2C2E; --sec-3:#3A3A3C;
+  --sec-4:#48484A; --sec-5:#636366; --sec-6:#8E8E93;
+  --sec-ord-1:#3A3A3C; --sec-ord-2:#48484A; --sec-ord-3:#636366; --sec-ord-4:#8E8E93; --sec-ord-5:#AEAEB2;
+  --div-neutre:#3A3A3C; --tri-neutre:#3A3A3C;
+  --status-good:#30D158; --status-warning:#FFD600; --status-serious:#FF9230; --status-critical:#FF4245;
+  --delta-up:#30D158; --delta-down:#FF4245;
+}

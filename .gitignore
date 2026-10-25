@@ -1,0 +1,12 @@
+# Ce qui appartient à la personne qui lance la veille, jamais au dépôt :
+profil.toml
+employeurs.csv
+donnees/
+vus.json
+passages.json
+offres-*.md
+tableau.html
+
+__pycache__/
+*.pyc
+.venv/

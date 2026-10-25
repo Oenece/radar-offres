@@ -1,0 +1,209 @@
+/* ============================================================================
+   Tableau de la veille d'offres : ce que la grammaire Apple n'a pas.
+   Chargé après habillage-apple.css, style-base.css et grammaire-apple.css :
+   il ne lit que leurs variables (aucune couleur en dur hors système).
+   ========================================================================== */
+
+body { background: var(--surface-page); color: var(--text-primary); margin: 0; }
+.page.large { max-width: 1180px; }
+/* La nav s'aligne sur la colonne de la page (1180 px) au lieu du bord de la fenêtre. */
+.nav-locale { margin: 0; padding-inline: max(20px, calc((100% - 1180px) / 2 + 20px)); }
+.segment button { white-space: nowrap; }
+
+/* Le mode sombre du système : la grammaire ne règle le segment que sous
+   [data-theme="dark"] ; sans ça, le segment actif disparaît sur le noir. */
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) .segment { background: rgba(118,118,128,0.24); }
+  :root:where(:not([data-theme="light"])) .segment button.actif,
+  :root:where(:not([data-theme="light"])) .segment button[aria-pressed="true"] { background: #636366; }
+  :root:where(:not([data-theme="light"])) .pastille-choix { background: rgba(118,118,128,0.24); }
+}
+:root[data-theme="dark"] .segment button[aria-pressed="true"] { background: #636366; }
+:root[data-theme="dark"] .pastille-choix { background: rgba(118,118,128,0.24); }
+
+/* --- en-tête : la date, le constat, trois chiffres ------------------------ */
+.tete { padding: 64px 0 56px; }
+.tete .t-eyebrow { font-size: var(--ap-17); margin: 0 0 10px; }
+.tete .t-headline { margin: 0; max-width: 900px; }
+.tete .t-intro { margin: 14px 0 0; color: var(--text-secondary); max-width: var(--contenu-etroit); }
+.tete .grille-chiffres { margin-top: 44px; }
+.chiffre-hero .valeur { font-variant-numeric: tabular-nums; }
+
+/* --- la barre de filtres, collée sous la nav ------------------------------ */
+.barre {
+  position: sticky; top: 52px; z-index: 9;
+  margin: 0 -20px; padding: 14px 20px 12px;
+  background: color-mix(in srgb, var(--surface-page) 82%, transparent);
+  -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid transparent; transition: border-color var(--duree) var(--ease-apple);
+}
+.barre.collee { border-bottom-color: var(--hairline); }
+.barre-ligne { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; }
+.barre-ligne.secondaire { margin-top: 10px; }
+.recherche { flex: 1 1 280px; min-width: 220px; }
+.champ.petit { height: 34px; font-size: var(--ap-14); padding: 0 12px; width: auto; }
+.compte { margin-left: auto; font-size: var(--ap-14); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+
+.pastille-choix {
+  display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none;
+  height: 34px; padding: 0 14px; border-radius: var(--pilule);
+  font-size: var(--ap-14); color: var(--text-primary);
+  background: rgba(118,118,128,0.12);
+  transition: background var(--duree) var(--ease-apple), color var(--duree) var(--ease-apple);
+}
+.pastille-choix input { position: absolute; opacity: 0; pointer-events: none; }
+.pastille-choix:has(input:checked) { background: var(--text-primary); color: var(--surface-page); }
+.pastille-choix:has(input:focus-visible) { box-shadow: 0 0 0 4px color-mix(in srgb, var(--marque) 35%, transparent); }
+
+/* --- la liste ------------------------------------------------------------- */
+.liste-offres { padding-bottom: 24px; }
+.offres { list-style: none; margin: 8px 0 0; padding: 0; }
+
+.offre {
+  display: grid; grid-template-columns: 84px 44px minmax(0, 1fr) 190px; gap: 4px 20px;
+  align-items: start; padding: 20px 16px; margin: 0 -16px;
+  border-top: 1px solid var(--hairline); border-radius: var(--radius-carte);
+  cursor: pointer; outline: none;
+  transition: background var(--duree) var(--ease-apple);
+}
+.offre:first-child { border-top-color: transparent; }
+.offre:hover, .offre.ouverte { background: var(--surface-creuse); }
+.offre:hover + .offre, .offre.ouverte + .offre { border-top-color: transparent; }
+.offre:focus-visible { box-shadow: inset 0 0 0 2px var(--marque); }
+.offre.retiree .poste, .offre.retiree .qui, .offre.retiree .mono { opacity: .5; }
+.offre.ecartee .poste, .offre.ecartee .mono { opacity: .45; }
+
+.quand { padding-top: 2px; }
+.quand .relatif { display: block; font-size: var(--ap-14); font-weight: 600; letter-spacing: -0.016em; font-variant-numeric: tabular-nums; }
+.quand .absolu { display: block; font-size: var(--ap-12); color: var(--text-muted); margin-top: 2px; }
+.quand .neuf { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; font-size: var(--ap-12); font-weight: 600; color: var(--text-primary); }
+.quand .neuf::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--status-good); }
+
+.mono {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--surface-creuse); color: var(--text-secondary);
+  font-size: var(--ap-14); font-weight: 600; letter-spacing: 0;
+}
+.offre:hover .mono, .offre.ouverte .mono { background: var(--surface-page); }
+
+.corps { min-width: 0; }
+.qui { font-size: var(--ap-12); color: var(--text-secondary); letter-spacing: -0.01em; }
+.qui b { color: var(--text-primary); font-weight: 600; font-size: var(--ap-14); letter-spacing: -0.016em; }
+.poste { margin: 3px 0 0; font-size: var(--ap-19); line-height: 1.21; font-weight: 600; letter-spacing: 0.012em; }
+.meta { margin-top: 6px; font-size: var(--ap-14); color: var(--text-secondary); line-height: 1.43; }
+.meta span + span::before { content: "·"; margin: 0 7px; color: var(--text-muted); }
+.statut { display: inline-block; margin-left: 8px; padding: 1px 9px; border-radius: var(--pilule);
+  font-size: var(--ap-12); font-weight: 600; vertical-align: 3px;
+  background: var(--text-primary); color: var(--surface-page); }
+.statut.retiree { background: transparent; color: var(--text-muted); box-shadow: inset 0 0 0 1px var(--hairline); }
+
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: var(--pilule);
+  font-size: var(--ap-12); font-weight: 600; letter-spacing: -0.01em; line-height: 1.5; }
+.tag.colle { background: color-mix(in srgb, var(--tri-vert-2) 16%, transparent); color: var(--tri-vert-3); }
+.tag.colle::before { content: "✓"; }
+.tag.coince { background: color-mix(in srgb, var(--status-serious) 18%, transparent); color: var(--div-chaud-4); }
+.tag.coince::before { content: "!"; font-weight: 700; }
+:root[data-theme="dark"] .tag.colle { color: var(--tri-vert-2); }
+:root[data-theme="dark"] .tag.coince { color: var(--status-serious); }
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) .tag.colle { color: var(--tri-vert-2); }
+  :root:where(:not([data-theme="light"])) .tag.coince { color: var(--status-serious); }
+}
+
+/* --- le salaire et sa jauge contre la cible -------------------------------- */
+.paie { text-align: right; padding-top: 2px; }
+.paie .montant { font-size: var(--ap-17); font-weight: 600; letter-spacing: -0.022em; font-variant-numeric: tabular-nums; }
+.paie .montant.absent { font-size: var(--ap-14); font-weight: 400; color: var(--text-muted); }
+.paie .devise { display: block; font-size: var(--ap-12); color: var(--text-muted); margin-top: 2px; }
+.jauge { position: relative; height: 6px; margin: 12px 0 0 auto; width: 150px; border-radius: 3px; background: var(--sec-2); }
+.jauge .plage { position: absolute; top: 0; bottom: 0; border-radius: 3px; background: var(--sec-ord-4); }
+.jauge .cible { position: absolute; top: -4px; bottom: -4px; border-left: 1.5px solid var(--text-primary); border-right: 1.5px solid var(--text-primary); }
+.jauge-legende { position: relative; display: flex; justify-content: space-between; width: 150px; margin: 5px 0 0 auto; font-size: var(--ap-12); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.jauge-legende .repere { position: absolute; top: 0; transform: translateX(-50%); color: var(--text-secondary); }
+
+/* --- le détail, une fois dépliée ------------------------------------------ */
+.detail { grid-column: 3 / -1; display: none; padding-top: 18px; cursor: auto; }
+.offre.ouverte .detail { display: block; }
+.raisons { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.raisons h3 { margin: 0 0 8px; font-size: var(--ap-12); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); }
+.raisons ul { margin: 0; padding: 0; list-style: none; }
+.raisons li { font-size: var(--ap-14); line-height: 1.43; padding: 3px 0 3px 20px; position: relative; }
+.raisons .colle li::before { content: "✓"; position: absolute; left: 0; color: var(--tri-vert-3); font-weight: 600; }
+.raisons .coince li::before { content: "!"; position: absolute; left: 4px; color: var(--div-chaud-4); font-weight: 700; }
+.raisons .rien { color: var(--text-muted); }
+.extrait { margin: 20px 0 0; max-width: 760px; font-size: var(--ap-14); line-height: 1.6; color: var(--text-secondary); }
+.dates { margin: 14px 0 0; font-size: var(--ap-12); color: var(--text-muted); }
+.actions-offre { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 20px; }
+.note-perso { display: block; width: 100%; max-width: 760px; margin-top: 14px; min-height: 64px; height: auto; padding: 10px 14px;
+  font-size: var(--ap-14); line-height: 1.43; resize: vertical; box-sizing: border-box; font-family: inherit; }
+
+.vide { padding: 64px 0; text-align: center; font-size: var(--ap-17); color: var(--text-secondary); }
+.raccourcis { margin-top: 28px; }
+kbd { font-family: inherit; font-size: 11px; padding: 1px 6px; border-radius: 5px; background: var(--surface-creuse);
+  box-shadow: inset 0 0 0 1px var(--hairline); color: var(--text-secondary); }
+
+/* --- à la main, employeurs, passages ---------------------------------------- */
+.section .t-headline-reduit { margin: 0; }
+#main .grille-tuiles { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.tuile .t-label { margin: 0 0 8px; }
+.tuile .t-tuile-copie { margin: 0 0 16px; font-size: var(--ap-17); line-height: 1.35; }
+.tuile .liens { display: flex; flex-direction: column; gap: 6px; }
+
+.familles { margin-top: 40px; display: grid; gap: 28px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+.famille h3 { margin: 0 0 12px; font-size: var(--ap-12); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); }
+.famille .noms { display: flex; flex-wrap: wrap; gap: 6px; }
+.nom-employeur { font: inherit; font-size: var(--ap-14); padding: 5px 12px; border: 0; border-radius: var(--pilule); cursor: pointer;
+  background: var(--surface-creuse); color: var(--text-primary); }
+.nom-employeur:hover { background: var(--sec-2); }
+.nom-employeur .n { margin-left: 6px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.nom-employeur.manuel { color: var(--text-secondary); }
+.nom-employeur.manuel .n::after { content: " · à la main"; }
+
+.contenu-large { margin-top: 40px; overflow-x: auto; }
+.table-passages { width: 100%; border-collapse: collapse; font-size: var(--ap-14); }
+.table-passages th { text-align: left; font-size: var(--ap-12); font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--text-muted); padding: 0 16px 10px 0; border-bottom: 1px solid var(--hairline); }
+.table-passages td { padding: 12px 16px 12px 0; border-bottom: 1px solid var(--hairline); font-variant-numeric: tabular-nums; }
+.table-passages tr:last-child td { border-bottom: 0; }
+.table-passages .nombre { text-align: right; }
+.pied { padding: 48px 0 64px; }
+
+/* --- petits écrans --------------------------------------------------------- */
+@media (max-width: 860px) {
+  .offre { grid-template-columns: 44px minmax(0, 1fr); }
+  .quand { grid-column: 2; grid-row: 2; display: flex; gap: 10px; align-items: baseline; padding: 0; }
+  .quand .absolu, .quand .neuf { margin: 0; }
+  .mono { grid-row: 1; }
+  .paie { grid-column: 2; text-align: left; }
+  .jauge, .jauge-legende { margin-left: 0; }
+  .detail { grid-column: 1 / -1; }
+  .raisons { grid-template-columns: 1fr; gap: 16px; }
+  .compte { margin-left: 0; width: 100%; }
+}
+@media (max-width: 734px) {
+  .page.large { padding: 0 16px; }
+  .nav-locale { padding-inline: 16px; }
+  /* Sur téléphone, la barre ne colle pas : elle prendrait la moitié de l'écran. */
+  .barre { position: static; margin: 0 -16px; padding: 12px 16px 10px; }
+  .segment { overflow-x: auto; max-width: 100%; }
+}
+@media print {
+  .nav-locale, .barre, .raccourcis, .actions-offre, .note-perso { display: none !important; }
+  .offre .detail { display: block; }
+}
+
+/* --- le score d'adéquation et sa rareté ------------------------------------ */
+.rarete { font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.rarete.r-commune { color: #7a7a7a; }
+.rarete.r-peu_commune { color: #2f8f4e; }
+.rarete.r-rare { color: #2b6fd6; }
+.rarete.r-epique { color: #8a3fd1; }
+.rarete.r-legendaire { color: #c07a00; background: linear-gradient(90deg, rgba(255, 196, 0, .16), rgba(255, 120, 0, .16)); }
+.pourquoi h3 { font-size: 13px; margin: 0 0 6px; }
+.pourquoi ul { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 2px; max-width: 420px; font-size: 13px; }
+.pourquoi li { display: flex; justify-content: space-between; gap: 12px; }
+.pourquoi b { font-variant-numeric: tabular-nums; }
+.pourquoi b.plus { color: #2f8f4e; }
+.pourquoi b.moins { color: #c0392b; }
