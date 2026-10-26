@@ -93,6 +93,20 @@
   // ------------------------------------------------------------ l'ouverture
   var scene = $("scene"), detail = $("scene-detail"), fond = $("ouverture");
   var enCours = null, choisie = null, retourDuFocus = null;
+  var visitees = {};   // les offres dont on a ouvert la page pendant ce booster : « J'ai postulé » s'y met en avant
+
+  // Les deux gestes qui comptent, sous chaque carte retournée : lire l'offre, puis dire qu'on a postulé.
+  function actionsCarte(o) {
+    var voir = '<a class="mini-action voir" data-voir="' + esc(o.cle) + '" href="' + esc(o.lien) +
+      '" target="_blank" rel="noopener noreferrer">Voir l\'offre ↗</a>';
+    if ((V.suivi[o.cle] || {}).candidature) return voir + '<span class="mini-action fait">✓ Dans l\'album</span>';
+    return voir + '<button type="button" class="mini-action postuler' + (visitees[o.cle] ? " a-faire" : "") +
+      '" data-postuler="' + esc(o.cle) + '">J\'ai postulé</button>';
+  }
+  function majActions(cle) {
+    var zone = scene.querySelector('.case-scene-actions[data-pour="' + CSS.escape(cle) + '"]');
+    if (zone) zone.innerHTML = actionsCarte(trouver(cle));
+  }
 
   function ouvrirBooster(booster) {
     if (!booster) return;
@@ -121,7 +135,8 @@
   function distribuer() {
     scene.className = "scene distribuee";
     scene.innerHTML = '<div class="main-cartes">' + enCours.map(function (o, i) {
-      return carte(o, { retournee: false }).replace('class="carte', 'style="--i:' + i + '" class="carte');
+      return '<div class="case-scene" style="--i:' + i + '">' + carte(o, { retournee: false }) +
+        '<div class="case-scene-actions" data-pour="' + esc(o.cle) + '">' + actionsCarte(o) + "</div></div>";
     }).join("") + "</div>" +
       '<div class="scene-actions"><button type="button" class="bouton" id="tout-retourner">Tout retourner</button></div>';
     var premiere = scene.querySelector(".carte"); if (premiere) premiere.focus();
@@ -130,6 +145,7 @@
   function retourner(bouton) {
     if (bouton.classList.contains("retournee")) { choisir(bouton.dataset.cle); return; }
     bouton.classList.add("retournee");
+    bouton.parentNode.classList.add("visible");          // ses deux boutons apparaissent
     var o = trouver(bouton.dataset.cle);
     bouton.setAttribute("aria-label", o.titre + ", " + o.employeur + ", " + V.RARETES[o.rarete]);
     if (o.rarete === "legendaire" || o.rarete === "epique") {
@@ -161,10 +177,19 @@
     }).join("");
     var statut = f.candidature ? '<span class="statut">Dans ton album</span>' : f.statut === "retenue" ? '<span class="statut">Retenue</span>'
       : f.statut === "ecartee" ? '<span class="statut retiree">Écartée</span>' : "";
+    var astuce = f.candidature ? "Elle est dans ton album : fais-la avancer à chaque relance ou entretien."
+      : visitees[cle] ? "Tu as postulé ? Range la carte dans ton album pour suivre ta candidature."
+      : "Lis l'offre en entier, postule sur le site de l'employeur, puis reviens cliquer « J'ai postulé » : la carte rejoint ton album.";
     detail.innerHTML =
       '<div class="detail-carte r-' + esc(o.rarete) + '">' +
         '<p class="detail-qui"><b>' + esc(o.employeur) + "</b> · " + esc(o.famille || "") + "</p>" +
         "<h3>" + esc(o.titre) + statut + "</h3>" +
+        '<div class="detail-principal">' +
+          '<a class="bouton grand voir" data-voir="' + esc(cle) + '" href="' + esc(o.lien) + '" target="_blank" rel="noopener noreferrer">Voir l\'offre ↗</a>' +
+          (f.candidature ? '<span class="bouton grand fait">✓ Dans ton album</span>'
+            : '<button type="button" class="bouton grand postuler' + (visitees[cle] ? " a-faire" : "") + '" data-action="postuler">J\'ai postulé : ranger dans l\'album</button>') +
+        "</div>" +
+        '<p class="detail-astuce">' + esc(astuce) + "</p>" +
         '<div class="detail-colonnes">' +
           '<div><h4>Ce qui colle</h4>' + liste(o.colle || [], "Rien de repéré dans la fiche.") + "</div>" +
           '<div><h4>Ce qui coince</h4>' + liste(o.coince || [], "Rien de repéré dans la fiche.") + "</div>" +
@@ -172,10 +197,9 @@
         "</div>" +
         (o.extrait ? '<p class="detail-extrait">' + esc(o.extrait) + "</p>" : "") +
         '<div class="detail-actions">' +
-          '<a class="bouton" href="' + esc(o.lien) + '" target="_blank" rel="noopener noreferrer">Voir l\'offre ↗</a>' +
-          (f.candidature ? "" : '<button type="button" class="bouton postuler" data-action="postuler">J\'ai postulé</button>') +
-          '<button type="button" class="bouton-secondaire" data-action="retenue">Retenir</button>' +
-          '<button type="button" class="bouton-secondaire" data-action="ecartee">Écarter</button>' +
+          '<span class="detail-actions-titre">Pas pour tout de suite ?</span>' +
+          '<button type="button" class="bouton-secondaire reduit" data-action="retenue">Retenir pour plus tard</button>' +
+          '<button type="button" class="bouton-secondaire reduit" data-action="ecartee">Écarter</button>' +
         "</div>" +
       "</div>";
   }
@@ -192,12 +216,22 @@
     if (e.target.closest("#paquet-ouvert")) { dechirer(); return; }
     if (e.target.closest("#tout-retourner")) { toutRetourner(); return; }
     if (e.target.closest("#terminer")) { fermer(); return; }
+    var voir = e.target.closest("[data-voir]");
+    if (voir) { marquerVisitee(voir.dataset.voir); return; }   // le lien s'ouvre dans un autre onglet
+    var p = e.target.closest("[data-postuler]");
+    if (p) { choisir(p.dataset.postuler); demanderPostuler(p.dataset.postuler); return; }
     var b = e.target.closest(".carte"); if (b) retourner(b);
   });
+  function marquerVisitee(cle) {
+    visitees[cle] = true;
+    setTimeout(function () { majActions(cle); if (choisie === cle) choisir(cle); }, 0);
+  }
   detail.addEventListener("click", function (e) {
+    var voir = e.target.closest("[data-voir]");
+    if (voir) { marquerVisitee(voir.dataset.voir); return; }
     var b = e.target.closest("[data-action]"); if (!b || !choisie) return;
     if (b.dataset.action === "postuler") { demanderPostuler(choisie); return; }
-    V.poserStatut(choisie, b.dataset.action); V.rendre(); choisir(choisie);
+    V.poserStatut(choisie, b.dataset.action); V.rendre(); choisir(choisie); majActions(choisie);
   });
   $("scene-fermer").addEventListener("click", fermer);
   document.addEventListener("keydown", function (e) {
@@ -223,7 +257,7 @@
     var cle = aPostuler; aPostuler = null;
     V.rendre();
     if (!fond.hidden) {
-      choisir(cle);
+      choisir(cle); majActions(cle);
       var b = scene.querySelector('.carte[data-cle="' + CSS.escape(cle) + '"]');
       if (b) { b.classList.add("rangee"); setTimeout(function () { b.classList.remove("rangee"); }, 900); }
     }
@@ -236,7 +270,7 @@
       : "Ton album est vide.";
     $("album-sous").textContent = b.total
       ? "Fais avancer chaque carte : relance, entretien, offre. Une carte dont l'offre a disparu du site est marquée clôturée : c'est souvent le moment de relancer."
-      : "Une carte entre ici quand tu postules : bouton « J'ai postulé » dans un booster, ou « Postulé » dans la liste des offres.";
+      : "Une carte entre ici quand tu postules : bouton « J'ai postulé » sous une carte d'un booster, ou dans la liste des offres.";
     $("album-bilan").innerHTML = b.total ? C.ETAPES.map(function (e) {
       return '<div class="bilan-etape e-' + e + '"><b>' + b[e] + "</b><span>" + esc(C.LIBELLES_ETAPES[e].toLowerCase()) + "</span></div>";
     }).join("") : "";

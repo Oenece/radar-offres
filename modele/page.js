@@ -149,7 +149,7 @@
       o.retiree ? "plus en ligne depuis le " + dateLongue(o.en_ligne_le) : "encore en ligne le " + dateLongue(o.en_ligne_le || o.vu_le),
       "source " + (NOMS_ATS[o.ats] || o.ats || "")].join(" · ");
     var boutons = ["retenue", "postule", "ecartee", ""].map(function (v) {
-      var lib = v ? (v === "retenue" ? "Retenir" : v === "postule" ? "Postulé" : "Écarter") : "À trier";
+      var lib = v ? (v === "retenue" ? "Retenir" : v === "postule" ? "J'ai postulé" : "Écarter") : "À trier";
       return '<button type="button" data-statut="' + v + '"' + (s === v ? ' class="actif" aria-pressed="true"' : ' aria-pressed="false"') + ">" + lib + "</button>";
     }).join("");
 

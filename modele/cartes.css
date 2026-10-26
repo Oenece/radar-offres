@@ -118,7 +118,8 @@
 /* --- la scène d'ouverture -------------------------------------------------- */
 body.scene-ouverte { overflow: hidden; }
 .ouverture {
-  position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; overflow-y: auto;
+  position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column;
+  overflow-y: auto; overflow-x: hidden;   /* l'éclat d'une carte rare dépasse la scène : pas de défilement de côté */
   background: color-mix(in srgb, var(--surface-page) 88%, #0b1530);
   -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
 }
@@ -134,7 +135,28 @@ body.scene-ouverte { overflow: hidden; }
 @keyframes envol { to { transform: translateY(-40px) scale(1.15); opacity: 0; } }
 
 .main-cartes { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; }
-.scene.distribuee .carte { animation: distribue .5s calc(var(--i) * 90ms) cubic-bezier(.2, .8, .3, 1.1) backwards; }
+.case-scene { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.scene.distribuee .case-scene { animation: distribue .5s calc(var(--i) * 90ms) cubic-bezier(.2, .8, .3, 1.1) backwards; }
+
+/* sous chaque carte retournée : « Voir l'offre » et « J'ai postulé », les deux gestes qui comptent */
+.case-scene-actions { display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 210px;
+  opacity: 0; transform: translateY(-6px); pointer-events: none; transition: opacity .3s .35s, transform .3s .35s; }
+.case-scene.visible .case-scene-actions { opacity: 1; transform: none; pointer-events: auto; }
+.mini-action {
+  display: block; text-align: center; padding: 8px 10px; border-radius: 999px; border: 0; cursor: pointer;
+  font: inherit; font-size: 14px; font-weight: 600; text-decoration: none; line-height: 1.2;
+}
+.mini-action.voir { background: var(--marque); color: #fff; }
+.mini-action.postuler { background: var(--status-good); color: #fff; }
+.mini-action.fait { background: color-mix(in srgb, var(--status-good) 16%, transparent); color: var(--status-good); cursor: default; }
+.mini-action:hover { filter: brightness(1.08); }
+.mini-action:focus-visible { outline: none; box-shadow: 0 0 0 4px color-mix(in srgb, var(--marque) 45%, transparent); }
+/* après la visite de l'offre, « J'ai postulé » pulse doucement : c'est l'étape suivante */
+.a-faire { animation: appel 1.6s ease-in-out infinite; }
+@keyframes appel {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--status-good) 55%, transparent); }
+  50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--status-good) 0%, transparent); }
+}
 @keyframes distribue { from { transform: translateY(-120px) rotate(-8deg) scale(.7); opacity: 0; } }
 .scene .carte:not(.retournee):hover .carte-interieur { transform: translateY(-6px) rotateZ(-1deg); }
 .scene .carte.choisie .carte-interieur { transform: rotateY(180deg) translateY(-10px); }
@@ -170,8 +192,14 @@ body.scene-ouverte { overflow: hidden; }
 .detail-colonnes .pourquoi ul { padding: 0; }
 .detail-colonnes .rien { margin: 0; color: var(--text-muted); font-size: var(--ap-14); }
 .detail-extrait { margin: 18px 0 0; font-size: var(--ap-14); line-height: 1.55; color: var(--text-secondary); }
-.detail-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.detail-principal { display: flex; flex-wrap: wrap; gap: 12px; }
+.bouton.grand { font-size: var(--ap-17); padding: 12px 22px; min-height: 0; height: auto; }
+.bouton.voir { background: var(--marque); }
 .bouton.postuler { background: var(--status-good); }
+.bouton.fait { background: color-mix(in srgb, var(--status-good) 16%, transparent); color: var(--status-good); cursor: default; }
+.detail-astuce { margin: 12px 0 22px; font-size: var(--ap-14); color: var(--text-secondary); }
+.detail-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--hairline); }
+.detail-actions-titre { font-size: var(--ap-14); color: var(--text-muted); margin-right: 4px; }
 
 /* --- « J'ai postulé » ------------------------------------------------------ */
 .dialogue-postuler { border: 0; border-radius: 18px; padding: 24px; width: min(440px, calc(100% - 32px));
@@ -220,11 +248,14 @@ body.scene-ouverte { overflow: hidden; }
   .carte-mono { display: none; }                       /* la place va au titre du poste */
   .carte-employeur { margin-top: 8px; }
   .carte-tags { max-height: 46px; overflow: hidden; }
+  .case-scene-actions { max-width: none; }
+  .mini-action { font-size: 13px; padding: 8px 6px; }
+  .bouton.grand { flex: 1 1 100%; text-align: center; }
   .detail-colonnes { grid-template-columns: 1fr; }
   .album { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .carte.mini { width: 100%; height: auto; aspect-ratio: 170 / 242; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .paquet, .paquet-brillance, .paquet.grand, .carte-interieur, .scene.distribuee .carte,
+  .paquet, .paquet-brillance, .paquet.grand, .carte-interieur, .scene.distribuee .case-scene, .a-faire,
   .carte-face::after, .scene::before { animation: none !important; transition: none !important; }
 }
