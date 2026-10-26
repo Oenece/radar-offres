@@ -188,6 +188,7 @@ jobs:
           SMTP_UTILISATEUR: ${{ secrets.SMTP_UTILISATEUR }}
           SMTP_MOT_DE_PASSE: ${{ secrets.SMTP_MOT_DE_PASSE }}
           ALERTE_A: ${{ secrets.ALERTE_A }}
+          ALERTE_DE: ${{ secrets.ALERTE_DE }}   # l'expéditeur vérifié chez ton service d'envoi
 ```
 
 Les secrets se créent dans *Settings > Secrets and variables > Actions* du dépôt privé.
