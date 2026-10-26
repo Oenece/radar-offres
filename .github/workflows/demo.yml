@@ -10,6 +10,8 @@ on:
   schedule:
     - cron: "0 5 * * *"   # 5 h UTC, soit 6 h ou 7 h à Paris
   workflow_dispatch:       # bouton « Run workflow » dans l'onglet Actions
+  push:
+    branches: [main]       # chaque changement du code met aussi la démo à jour
 
 permissions:
   contents: read
