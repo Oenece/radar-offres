@@ -34,8 +34,9 @@
 }
 
 .ctx-presentation { --radius-carte: 0px;  --ombre: none; }
-.ctx-produit      { --radius-carte: 12px; --ombre: 0 1px 2px rgba(16,20,24,.05), 0 6px 20px rgba(16,20,24,.07);
-                    --surface-page: #F7F7F8; }
+/* Le fond de page reste celui de :root, qui suit le thème clair ou sombre : le redéfinir
+   ici, sur le body, figerait le clair même en sombre. */
+.ctx-produit      { --radius-carte: 12px; --ombre: 0 1px 2px rgba(16,20,24,.05), 0 6px 20px rgba(16,20,24,.07); }
 .ctx-produit-slide{ --radius-carte: 8px;  --ombre: none; }
 
 .ctx-video        { --radius-carte: 24px; --ombre: none; margin: 0; overflow: hidden; }

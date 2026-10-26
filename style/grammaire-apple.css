@@ -55,7 +55,7 @@
 }
 
 .ctx-presentation  { --radius-carte: 0px;  --radius-tuile: 0px; --ombre: none; --section-gap: 56px; --bloc-gap: 28px; }
-.ctx-produit       { --ombre: none; --surface-page: var(--surface-page); }
+.ctx-produit       { --ombre: none; }
 .ctx-produit-slide { --radius-carte: 12px; --radius-tuile: 12px; --ombre: none; }
 
 body { font-size: var(--ap-14); line-height: 1.42859; letter-spacing: -0.016em;
