@@ -67,7 +67,19 @@ class Alerte(unittest.TestCase):
         texte = message.get_body(("plain",)).get_content()
         self.assertIn("90 (légendaire) Acme : Data Analyst", texte)
         self.assertIn("https://exemple.fr/Data-Analyst", texte)
-        self.assertIn('<a href="https://exemple.fr/Data-Analyst">', message.get_body(("html",)).get_content())
+        page = message.get_body(("html",)).get_content()
+        self.assertIn('<a href="https://exemple.fr/Data-Analyst" ', page)
+        self.assertIn("#C98A00", page)              # la couleur de la rareté légendaire
+        self.assertNotIn("tableau complet", page)   # pas de lien hors de GitHub Actions
+
+    def test_le_lien_du_tableau_sur_github(self):
+        env = {"GITHUB_RUN_ID": "42", "GITHUB_REPOSITORY": "moi/ma-veille", "GITHUB_SERVER_URL": "https://github.com"}
+        lien = alerte.lien_du_passage(env)
+        self.assertEqual(lien, "https://github.com/moi/ma-veille/actions/runs/42")
+        self.assertIsNone(alerte.lien_du_passage({}))
+        message = alerte.composer(alerte.offres_a_signaler(self.p), lien)
+        self.assertIn(lien, message.get_body(("html",)).get_content())
+        self.assertIn(lien, message.get_body(("plain",)).get_content())
 
     def test_envoi_smtp(self):
         message = alerte.composer(alerte.offres_a_signaler(self.p))
