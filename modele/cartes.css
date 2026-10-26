@@ -1,0 +1,230 @@
+/* ============================================================================
+   Les cartes : boosters, ouverture, album. Chargé après page.css.
+   Une couleur par rareté (--r), reprise par le cadre, l'éclat et l'étiquette.
+   ========================================================================== */
+
+.carte, .detail-carte, .bilan-etape { --r: #8E8E93; --r2: #C7C7CC; }
+.r-peu_commune { --r: #30A14E; --r2: #8FE3A6; }
+.r-rare        { --r: #2B6FD6; --r2: #8CC1FF; }
+.r-epique      { --r: #8A3FD1; --r2: #D3A6FF; }
+.r-legendaire  { --r: #C98A00; --r2: #FFD66B; }
+
+.section-cartes { padding: 8px 0 72px; }
+.section-cartes .t-headline-reduit { margin: 0; }
+.section-cartes .t-intro { margin: 12px 0 0; color: var(--text-secondary); }
+.titre-offres { margin: 0 0 20px; }
+
+/* --- le paquet (booster fermé) -------------------------------------------- */
+.paquets { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 32px; }
+.paquet {
+  position: relative; width: 168px; height: 236px; padding: 0; border: 0; cursor: pointer; overflow: hidden;
+  border-radius: 16px; color: #fff; font: inherit; text-align: left;
+  background:
+    radial-gradient(120% 80% at 20% 0%, rgba(255,255,255,.35), transparent 55%),
+    linear-gradient(155deg, #1d1d1f 0%, #3a2a6b 45%, #0b5cad 100%);
+  box-shadow: 0 1px 2px rgba(0,0,0,.2), 0 14px 30px rgba(20, 30, 80, .28);
+  transform: rotate(calc((var(--i, 0) - 1) * 2deg));
+  transition: transform .35s var(--ease-apple), box-shadow .35s var(--ease-apple);
+}
+.paquet:hover, .paquet:focus-visible { transform: translateY(-6px) rotate(0deg); box-shadow: 0 2px 4px rgba(0,0,0,.2), 0 22px 44px rgba(20, 30, 80, .36); outline: none; }
+.paquet:focus-visible { box-shadow: 0 0 0 4px color-mix(in srgb, var(--marque) 45%, transparent), 0 22px 44px rgba(20, 30, 80, .36); }
+.paquet::before, .paquet::after {          /* les deux soudures du paquet */
+  content: ""; position: absolute; left: 0; right: 0; height: 14px;
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,.28) 0 4px, transparent 4px 8px);
+}
+.paquet::before { top: 0; } .paquet::after { bottom: 0; }
+.paquet-brillance {
+  position: absolute; inset: -40%; pointer-events: none;
+  background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,.35) 50%, transparent 60%);
+  transform: translateX(-60%); animation: reflet 4.5s var(--ease-apple) infinite;
+}
+.paquet-nom { position: absolute; left: 18px; top: 34px; font-size: 26px; line-height: 1; font-weight: 700; letter-spacing: -.02em; }
+.paquet-info { position: absolute; left: 18px; right: 18px; bottom: 26px; font-size: 12px; line-height: 1.35; opacity: .9; }
+.paquet-info b { display: block; font-size: 15px; }
+@keyframes reflet { 0%, 55% { transform: translateX(-60%); } 100% { transform: translateX(60%); } }
+.etagere-plus { margin: 14px 0 0; color: var(--text-secondary); }
+
+/* --- la pochette : ce qui attend le prochain booster ---------------------- */
+.pochette { margin-top: 32px; display: grid; grid-template-columns: auto 1fr; gap: 4px 18px; align-items: center; max-width: 620px; }
+.pochette-cartes { grid-row: span 2; display: flex; }
+.pochette-cartes span { width: 26px; height: 36px; margin-right: -8px; border-radius: 5px; border: 1.5px dashed var(--baseline); background: var(--surface-page); }
+.pochette-cartes span.pleine { border: 0; background: linear-gradient(155deg, #3a2a6b, #0b5cad); box-shadow: 0 1px 3px rgba(0,0,0,.25); }
+.pochette-texte { margin: 0; font-size: var(--ap-17); }
+.pochette-note { margin: 0; font-size: var(--ap-14); color: var(--text-secondary); }
+.vu-tout { display: inline-block; margin-top: 18px; font-size: var(--ap-14); }
+
+/* --- la carte ------------------------------------------------------------- */
+.carte {
+  position: relative; width: 210px; height: 300px; padding: 0; border: 0; background: none; cursor: pointer;
+  font: inherit; color: inherit; text-align: left; perspective: 1200px; border-radius: 16px;
+}
+.carte:focus-visible { outline: none; }
+.carte:focus-visible .carte-interieur { box-shadow: 0 0 0 4px color-mix(in srgb, var(--marque) 45%, transparent); }
+.carte-interieur {
+  position: absolute; inset: 0; display: block; border-radius: 16px;
+  transform-style: preserve-3d; transition: transform .6s cubic-bezier(.3, .7, .3, 1);
+}
+.carte.retournee .carte-interieur { transform: rotateY(180deg); }
+.carte-dos, .carte-face {
+  position: absolute; inset: 0; border-radius: 16px; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden;
+}
+.carte-dos {
+  display: flex; flex-direction: column; justify-content: center; align-items: center; color: rgba(255,255,255,.9);
+  font-size: 22px; font-weight: 700; line-height: 1; letter-spacing: -.02em;
+  background:
+    repeating-linear-gradient(45deg, rgba(255,255,255,.06) 0 10px, transparent 10px 20px),
+    linear-gradient(155deg, #1d1d1f, #3a2a6b 50%, #0b5cad);
+  box-shadow: inset 0 0 0 6px rgba(255,255,255,.08), 0 10px 26px rgba(0,0,0,.25);
+}
+.carte-face {
+  transform: rotateY(180deg); display: flex; flex-direction: column; padding: 14px 16px 14px;
+  background: var(--surface-1); color: var(--text-primary);
+  box-shadow: inset 0 0 0 2px var(--r), 0 10px 26px rgba(0,0,0,.18);
+}
+.carte-tete { display: flex; justify-content: space-between; align-items: baseline; }
+.carte-rarete { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--r); }
+.carte-tete b { font-size: 22px; font-variant-numeric: tabular-nums; color: var(--r); }
+.carte-mono {
+  width: 42px; height: 42px; margin: 10px 0 8px; border-radius: 50%; display: grid; place-items: center;
+  font-size: 14px; font-weight: 600; background: color-mix(in srgb, var(--r) 14%, var(--surface-creuse)); color: var(--r);
+}
+.carte-employeur { margin: 0; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.carte-poste {
+  margin: 2px 0 6px; font-size: 16px; line-height: 1.2; font-weight: 600; letter-spacing: 0;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.carte-lieu, .carte-salaire { margin: 0; font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.carte-salaire { color: var(--text-primary); font-weight: 600; }
+.carte-tags { list-style: none; margin: auto 0 0; padding: 8px 0 0; display: flex; flex-wrap: wrap; gap: 4px; }
+.carte-tags li { font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 999px; background: color-mix(in srgb, var(--r) 14%, transparent); color: var(--r); }
+.carte-etape, .carte-close { margin: 6px 0 0; font-size: 11px; font-weight: 600; color: var(--text-secondary); }
+.carte-close { color: var(--status-critical); }
+
+/* l'éclat de chaque rareté, une fois retournée */
+.carte.retournee.r-rare .carte-face,
+.carte.retournee.r-epique .carte-face { box-shadow: inset 0 0 0 2px var(--r), 0 0 24px color-mix(in srgb, var(--r) 45%, transparent), 0 10px 26px rgba(0,0,0,.18); }
+.carte.r-epique .carte-face::after,
+.carte.r-legendaire .carte-face::after {     /* le reflet holographique */
+  content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: soft-light; opacity: .55;
+  background: linear-gradient(120deg, transparent 20%, var(--r2) 40%, #fff 50%, var(--r2) 60%, transparent 80%);
+  background-size: 250% 250%; animation: holo 3.5s linear infinite;
+}
+.carte.r-legendaire .carte-face {
+  background: linear-gradient(160deg, color-mix(in srgb, var(--r2) 30%, var(--surface-1)), var(--surface-1) 45%);
+  box-shadow: inset 0 0 0 3px var(--r), 0 0 34px color-mix(in srgb, var(--r) 60%, transparent), 0 10px 26px rgba(0,0,0,.18);
+}
+@keyframes holo { from { background-position: 0% 0%; } to { background-position: 250% 250%; } }
+
+/* --- la scène d'ouverture -------------------------------------------------- */
+body.scene-ouverte { overflow: hidden; }
+.ouverture {
+  position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; overflow-y: auto;
+  background: color-mix(in srgb, var(--surface-page) 88%, #0b1530);
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+}
+.ouverture[hidden] { display: none; }
+.ouverture-barre { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px max(20px, calc((100% - 1180px) / 2 + 20px)); }
+.scene-titre { margin: 0; font-weight: 600; color: var(--text-secondary); }
+.scene { position: relative; flex: 0 0 auto; display: grid; place-items: center; min-height: 420px; padding: 12px 20px; }
+.paquet.grand { width: 220px; height: 310px; transform: none; animation: flotte 2.6s ease-in-out infinite; }
+.paquet.grand .paquet-nom { font-size: 34px; }
+.paquet.dechire { animation: secoue .45s ease-in-out, envol .3s .4s ease-in forwards; }
+@keyframes flotte { 50% { transform: translateY(-8px); } }
+@keyframes secoue { 20%, 60% { transform: rotate(-4deg) scale(1.03); } 40%, 80% { transform: rotate(4deg) scale(1.03); } }
+@keyframes envol { to { transform: translateY(-40px) scale(1.15); opacity: 0; } }
+
+.main-cartes { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; }
+.scene.distribuee .carte { animation: distribue .5s calc(var(--i) * 90ms) cubic-bezier(.2, .8, .3, 1.1) backwards; }
+@keyframes distribue { from { transform: translateY(-120px) rotate(-8deg) scale(.7); opacity: 0; } }
+.scene .carte:not(.retournee):hover .carte-interieur { transform: translateY(-6px) rotateZ(-1deg); }
+.scene .carte.choisie .carte-interieur { transform: rotateY(180deg) translateY(-10px); }
+.scene .carte.rangee .carte-face { animation: range .9s ease; }
+@keyframes range { 30% { box-shadow: inset 0 0 0 3px var(--status-good), 0 0 40px color-mix(in srgb, var(--status-good) 60%, transparent); } }
+.scene-actions { width: 100%; display: flex; justify-content: center; margin-top: 26px; }
+
+/* l'éclat d'une carte épique ou légendaire : un flash qui envahit la scène */
+.scene.eclat-epique::before, .scene.eclat-legendaire::before {
+  content: ""; position: absolute; inset: -20% -10%; pointer-events: none; z-index: -1;
+  animation: eclat 1.4s ease-out forwards;
+}
+.scene.eclat-epique::before { background: radial-gradient(circle at 50% 45%, rgba(170, 100, 255, .45), transparent 60%); }
+.scene.eclat-legendaire::before {
+  background: radial-gradient(circle at 50% 45%, rgba(255, 210, 90, .7), transparent 55%),
+              repeating-conic-gradient(from 0deg at 50% 45%, rgba(255, 210, 90, .25) 0 6deg, transparent 6deg 18deg);
+  animation-duration: 2.2s;
+}
+@keyframes eclat { from { opacity: 0; transform: scale(.6); } 25% { opacity: 1; } to { opacity: 0; transform: scale(1.25); } }
+
+/* le détail de la carte choisie, sous la main */
+.scene-detail { padding: 0 20px 48px; display: flex; justify-content: center; }
+.detail-carte {
+  width: 100%; max-width: 920px; padding: 22px 24px; border-radius: 18px; background: var(--surface-1);
+  box-shadow: inset 4px 0 0 var(--r), 0 10px 30px rgba(0,0,0,.12);
+}
+.detail-qui { margin: 0; font-size: var(--ap-12); color: var(--text-secondary); }
+.detail-qui b { color: var(--text-primary); font-size: var(--ap-14); }
+.detail-carte h3 { margin: 4px 0 16px; font-size: var(--ap-21); }
+.detail-colonnes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.detail-colonnes h4 { margin: 0 0 8px; font-size: var(--ap-12); text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); }
+.detail-colonnes ul { margin: 0; padding-left: 18px; font-size: var(--ap-14); line-height: 1.43; }
+.detail-colonnes .pourquoi ul { padding: 0; }
+.detail-colonnes .rien { margin: 0; color: var(--text-muted); font-size: var(--ap-14); }
+.detail-extrait { margin: 18px 0 0; font-size: var(--ap-14); line-height: 1.55; color: var(--text-secondary); }
+.detail-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.bouton.postuler { background: var(--status-good); }
+
+/* --- « J'ai postulé » ------------------------------------------------------ */
+.dialogue-postuler { border: 0; border-radius: 18px; padding: 24px; width: min(440px, calc(100% - 32px));
+  background: var(--surface-1); color: var(--text-primary); box-shadow: 0 30px 80px rgba(0,0,0,.35); }
+.dialogue-postuler::backdrop { background: rgba(0,0,0,.4); }
+.dialogue-postuler h3 { margin: 0; font-size: var(--ap-21); }
+.postuler-offre { margin: 4px 0 18px; color: var(--text-secondary); font-size: var(--ap-14); }
+.dialogue-postuler label { display: grid; gap: 6px; margin-bottom: 14px; font-size: var(--ap-14); font-weight: 600; }
+.dialogue-postuler textarea { height: auto; padding: 10px 12px; font: inherit; font-weight: 400; resize: vertical; }
+.postuler-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+
+/* --- l'album ---------------------------------------------------------------- */
+.album-bilan { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.bilan-etape { display: flex; align-items: baseline; gap: 6px; padding: 8px 14px; border-radius: 12px; background: var(--surface-creuse); }
+.bilan-etape b { font-size: var(--ap-21); font-variant-numeric: tabular-nums; }
+.bilan-etape span { font-size: var(--ap-14); color: var(--text-secondary); }
+.bilan-etape.e-offre b { color: var(--r); --r: #C98A00; }
+.album { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 26px 18px; margin-top: 26px; }
+.case-album { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.carte.mini { width: 170px; height: 242px; }
+.carte.mini .carte-poste { font-size: 14px; }
+.carte.mini .carte-mono { width: 34px; height: 34px; margin: 6px 0; }
+.carte.mini .carte-tags { display: none; }
+.carte.mini.retiree .carte-face { filter: grayscale(.6); }
+/* l'aspect suit l'étape : relancée (un tampon), entretien (cadre argent), offre (cadre or) */
+.carte.e-relance .carte-face::before {
+  content: "relancé"; position: absolute; right: -26px; top: 18px; transform: rotate(35deg); padding: 2px 30px;
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; background: var(--text-primary); color: var(--surface-1);
+}
+.carte.e-entretien .carte-face { box-shadow: inset 0 0 0 4px #A7ADB7, 0 0 0 2px var(--r), 0 10px 26px rgba(0,0,0,.18); }
+.carte.e-offre .carte-face { box-shadow: inset 0 0 0 4px #D4A017, 0 0 26px rgba(212, 160, 23, .55), 0 10px 26px rgba(0,0,0,.18); }
+.frise { list-style: none; display: flex; gap: 6px; margin: 0; padding: 0; }
+.frise li { width: 22px; height: 4px; border-radius: 2px; background: var(--sec-2); }
+.frise li.faite { background: var(--status-good); }
+.case-actions { display: flex; align-items: center; gap: 10px; min-height: 30px; }
+.case-actions .lien { font-size: var(--ap-12); }
+
+/* --- petits écrans et mouvement réduit -------------------------------------- */
+@media (max-width: 734px) {
+  .paquets { gap: 14px; }
+  .paquet { width: 140px; height: 196px; }
+  .main-cartes { gap: 10px; }
+  .carte { width: calc(50vw - 26px); height: calc((50vw - 26px) * 1.43); max-width: 210px; max-height: 300px; }
+  .carte-poste { font-size: 14px; }
+  .carte-face { padding: 12px 12px; }
+  .carte-mono { display: none; }                       /* la place va au titre du poste */
+  .carte-employeur { margin-top: 8px; }
+  .carte-tags { max-height: 46px; overflow: hidden; }
+  .detail-colonnes { grid-template-columns: 1fr; }
+  .album { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .carte.mini { width: 100%; height: auto; aspect-ratio: 170 / 242; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .paquet, .paquet-brillance, .paquet.grand, .carte-interieur, .scene.distribuee .carte,
+  .carte-face::after, .scene::before { animation: none !important; transition: none !important; }
+}

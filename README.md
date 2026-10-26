@@ -34,8 +34,9 @@ postes, à jour, en JSON ou en RSS.
    La note donne une rareté, de « commune » à « légendaire » : une offre rare est une offre
    qui te correspond, pas une offre difficile à trouver.
 5. **Se souvient** de ce qui a déjà été vu : un second passage ne ressort que les nouveautés.
-6. **Produit** un compte rendu Markdown du jour et un tableau HTML filtrable, en un seul fichier
-   qui s'ouvre sans serveur, où tu suis tes offres (retenue, postulé, écartée, note libre).
+6. **Produit** un compte rendu Markdown du jour et une page HTML, en un seul fichier qui s'ouvre
+   sans serveur : les nouvelles offres arrivent en **boosters de cartes** à ouvrir, et chaque
+   candidature entre dans un **album** où tu la suis jusqu'à l'offre.
 
 ```
 employeurs.csv ──► lecteurs ATS ──► offre normalisée ──► filtre lieu ──► filtre thème
@@ -107,6 +108,22 @@ Le score d'adéquation part de 40 et ajoute ou retire des points selon ce qui co
 titre, le salaire, l'expérience demandée et le télétravail. Il donne la rareté : peu commune à
 partir de 40, rare à 60, épique à 75, légendaire à 90, sans aucun quota. Le détail et la méthode
 pour le calibrer sont dans le [guide](GUIDE.md#5-régler-le-score-et-la-rareté).
+
+## Les boosters et l'album
+
+Le but n'est pas de jouer : c'est de donner envie d'ouvrir les offres et de postuler.
+
+- **Un booster** réunit 5 nouvelles offres. Tant qu'il y en a moins, elles attendent dans une
+  pochette (« 3 / 5 cartes »). Sans quota de rareté : un booster sans carte rare est normal.
+- **À l'ouverture**, les cartes se retournent une à une, la plus rare en dernier. Chaque carte
+  montre ce qui colle, ce qui coince, le détail de son score et le lien vers l'offre.
+- **L'album** ne reçoit une carte que si tu cliques sur « J'ai postulé » (avec la date et une note).
+  Tu la fais ensuite avancer : relancé, entretien, offre reçue. Son aspect change à chaque étape,
+  et elle est marquée « clôturée » quand l'offre disparaît du site.
+- Une carte ouverte mais pas postulée reste dans la liste des offres, avec ses filtres.
+
+Tout reste dans le navigateur (localStorage) : rien n'est envoyé, et sur la démo en ligne chaque
+visiteur a sa propre collection.
 
 ## Recevoir une alerte par e-mail
 
@@ -197,7 +214,8 @@ notée dans `passages.json` et dans le compte rendu.
 ## Tests
 
 ```bash
-python -m unittest discover tests
+python -m unittest discover tests     # le Python, sans réseau
+node --test "tests/js/*.test.js"      # la logique des boosters et de l'album
 ```
 
 Les tests tournent sans réseau : les lecteurs reçoivent de fausses réponses écrites sur le modèle
@@ -228,8 +246,10 @@ profil et ses erreurs. Ils utilisent un profil fixe (`tests/profil_test.toml`) :
 | `alerte.py` | l'e-mail des meilleures offres du dernier passage |
 | `salaire.py` | la mise en forme des fourchettes de salaire (« 60 à 100 k€ ») |
 | `tableau.py` | assemble `tableau.html` (modèle, styles, script et données en un seul fichier) |
-| `modele/` | le squelette HTML, le style et le script du tableau |
-| `tests/` | les tests, sans réseau |
+| `modele/` | le squelette HTML, les styles et les scripts de la page |
+| `modele/collection.js` | la logique des cartes : boosters, pochette, album, étapes de candidature |
+| `modele/cartes.js` | l'affichage des cartes : étagère, ouverture d'un booster, album |
+| `tests/` | les tests, sans réseau (Python, et JavaScript dans `tests/js`) |
 
 ## Licence
 

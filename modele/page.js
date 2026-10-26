@@ -194,6 +194,7 @@
       if (li) li.classList.add("ouverte"); else ouverte = null;
     }
     chiffres();
+    document.dispatchEvent(new Event("veille:rendu"));   // les cartes se mettent à jour (cartes.js)
   }
 
   function chiffres() {
@@ -269,9 +270,18 @@
   // ------------------------------------------------------------ le suivi
   function poserStatut(cle, valeur) {
     var f = suivi[cle] || {};
+    if (valeur === "postule" && !f.candidature) {
+      f = Collection.postuler(f);   // « Postulé » fait entrer la carte dans l'album
+    } else if (valeur !== "postule" && f.candidature && f.candidature.historique.length < 2) {
+      delete f.candidature;         // un clic de trop sur « Postulé », rattrapé avant toute relance
+    }
     if (valeur) f.statut = valeur; else delete f.statut;
     f.maj = new Date().toISOString().slice(0, 10);
-    if (!f.statut && !f.note) delete suivi[cle]; else suivi[cle] = f;
+    enregistrer(cle, f);
+  }
+  // Range une fiche de suivi (statut, note, candidature) ; une fiche vide disparaît.
+  function enregistrer(cle, f) {
+    if (!f.statut && !f.note && !f.candidature) delete suivi[cle]; else suivi[cle] = f;
     ecrire(CLE_SUIVI, suivi);
   }
 
@@ -333,8 +343,7 @@
     if (!e.target.classList.contains("note-perso")) return;
     var cle = e.target.closest(".offre").dataset.cle, f = suivi[cle] || {};
     f.note = e.target.value; f.maj = new Date().toISOString().slice(0, 10);
-    if (!f.note && !f.statut) delete suivi[cle]; else suivi[cle] = f;
-    ecrire(CLE_SUIVI, suivi);
+    enregistrer(cle, f);
   });
 
   // Clavier
@@ -367,6 +376,13 @@
   // La barre de filtres prend un filet quand elle colle sous la nav
   var barre = $("barre");
   window.addEventListener("scroll", function () { barre.classList.toggle("collee", barre.getBoundingClientRect().top <= 53); }, { passive: true });
+
+  // Ce que cartes.js partage avec la liste : les offres, le suivi et de quoi le modifier.
+  window.Veille = {
+    offres: offres, suivi: suivi, lire: lire, ecrire: ecrire, enregistrer: enregistrer, poserStatut: poserStatut,
+    rendre: rendre, esc: esc, initiales: initiales, dateCourte: dateCourte, dateLongue: dateLongue,
+    RARETES: RARETES, NOMS_ATS: NOMS_ATS
+  };
 
   $("f-cible-texte").textContent = CIBLE_TEXTE;
   entete(); manuels(); employeurs(); historique(); synchroniserControles(); rendre();

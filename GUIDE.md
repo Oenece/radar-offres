@@ -222,6 +222,13 @@ Il n'y a aucun quota : une semaine sans légendaire est une semaine normale.
 
 ---
 
+### Les boosters
+
+La rareté du score décide de l'aspect des cartes dans les boosters : une carte légendaire est
+une offre qui te correspond presque parfaitement. Pour changer la taille d'un booster (5 cartes
+par défaut), modifie `TAILLE_BOOSTER` au début de `modele/collection.js`, puis relance
+`python tableau.py`.
+
 ## 6. Recevoir les meilleures offres par e-mail
 
 ```toml

@@ -129,6 +129,8 @@ class Passage(Dossier):
         tableau = self.donnees("tableau.html").read_text(encoding="utf-8")
         self.assertIn('"rarete"', tableau)
         self.assertIn('"cible_texte": "45 à 55 k€"', tableau)
+        for morceau in ('id="etagere"', 'id="album-cartes"', "var Collection", "window.Veille", "veille-offres-ouvertes"):
+            self.assertIn(morceau, tableau)   # les cartes sont bien assemblées dans la page
         self.assertNotIn("/*DONNEES*/", tableau)
 
     def test_un_second_passage_ne_ressort_rien(self):

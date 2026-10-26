@@ -64,9 +64,10 @@ def donnees(p):
 def ecrire_tableau(p):
     feuilles = ["habillage-apple.css", "style-base.css", "grammaire-apple.css"]
     css = "\n".join((STYLE / f).read_text(encoding="utf-8") for f in feuilles)
-    css += "\n" + (MODELE / "page.css").read_text(encoding="utf-8")
-    js = (STYLE / "grammaire-apple.js").read_text(encoding="utf-8") + "\n"
-    js += (MODELE / "page.js").read_text(encoding="utf-8")
+    css += "\n" + "\n".join((MODELE / f).read_text(encoding="utf-8") for f in ("page.css", "cartes.css"))
+    # collection.js (la logique des cartes) avant page.js (la liste), puis cartes.js (l'affichage).
+    scripts = [STYLE / "grammaire-apple.js"] + [MODELE / f for f in ("collection.js", "page.js", "cartes.js")]
+    js = "\n".join(f.read_text(encoding="utf-8") for f in scripts)
     # « </ » fermerait la balise <script> si un titre d'offre en contenait un.
     contenu = json.dumps(donnees(p), ensure_ascii=False).replace("</", "<\\/")
 

@@ -17,3 +17,5 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - run: python -m unittest discover tests -v
+      - name: Tests de la logique des cartes (JavaScript)
+        run: node --test "tests/js/*.test.js"

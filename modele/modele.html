@@ -12,7 +12,9 @@
 
 <nav class="nav-locale">
   <span class="titre">Veille d'offres</span>
-  <a href="#offres" class="actif">Offres</a>
+  <a href="#boosters" class="actif">Boosters</a>
+  <a href="#album">Album</a>
+  <a href="#offres">Offres</a>
   <a href="#main">À la main</a>
   <a href="#suivis">Employeurs</a>
   <a href="#passages">Passages</a>
@@ -28,7 +30,24 @@
     <div class="grille-chiffres" id="chiffres"></div>
   </header>
 
+  <section class="section-cartes" id="boosters">
+    <p class="t-eyebrow accent">Boosters</p>
+    <h2 class="t-headline-reduit" id="boosters-titre"></h2>
+    <p class="t-intro contenu-etroit" id="boosters-sous"></p>
+    <div class="etagere" id="etagere"></div>
+  </section>
+
+  <section class="section-cartes" id="album">
+    <p class="t-eyebrow accent">Album</p>
+    <h2 class="t-headline-reduit" id="album-titre"></h2>
+    <p class="t-intro contenu-etroit" id="album-sous"></p>
+    <div class="album-bilan" id="album-bilan"></div>
+    <div class="album" id="album-cartes"></div>
+  </section>
+
   <section class="liste-offres" id="offres">
+    <p class="t-eyebrow accent">Offres</p>
+    <h2 class="t-headline-reduit titre-offres">Toutes les offres gardées.</h2>
     <div class="barre" id="barre">
       <div class="barre-ligne">
         <input class="champ recherche" id="recherche" type="search"
@@ -98,6 +117,31 @@
 
   <p class="pied" id="pied"></p>
 </main>
+
+<!-- L'ouverture d'un booster, en plein écran (cartes.js) -->
+<div class="ouverture" id="ouverture" hidden role="dialog" aria-modal="true" aria-labelledby="scene-titre">
+  <div class="ouverture-barre">
+    <p class="scene-titre" id="scene-titre"></p>
+    <button class="bouton-secondaire reduit" id="scene-fermer" type="button">Fermer</button>
+  </div>
+  <div class="scene" id="scene"></div>
+  <div class="scene-detail" id="scene-detail" aria-live="polite"></div>
+</div>
+
+<!-- « J'ai postulé » : la date et une note, puis la carte entre dans l'album -->
+<dialog class="dialogue-postuler" id="dialogue-postuler">
+  <form method="dialog" id="form-postuler">
+    <h3 id="postuler-titre">J'ai postulé</h3>
+    <p class="postuler-offre" id="postuler-offre"></p>
+    <label>Le <input class="champ" type="date" id="postuler-le" required></label>
+    <label>Note (facultatif)
+      <textarea class="champ" id="postuler-note" rows="3" placeholder="Canal, contact, ce que tu as envoyé…"></textarea></label>
+    <div class="postuler-actions">
+      <button class="bouton-secondaire" value="annuler" type="submit" formnovalidate>Annuler</button>
+      <button class="bouton" value="ok" type="submit">Ranger dans l'album</button>
+    </div>
+  </form>
+</dialog>
 
 <script id="donnees" type="application/json">/*DONNEES*/</script>
 <script>
