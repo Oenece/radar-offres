@@ -1,18 +1,18 @@
 """Tests des règles de tri et de la mise en forme (veille.py, partie 1 et outils).
 
-Les filtres sont testés avec profil.exemple.toml : lieux autour de Lyon, remote en
+Les filtres sont testés avec tests/profil_test.toml : lieux autour de Lyon, remote en
 Europe, thèmes data / analytics.
 """
 
 import unittest
 
-from outils import offre, profil_exemple
+from outils import offre, profil_test
 
 import veille
 
 
 class Lieu(unittest.TestCase):
-    p = profil_exemple()
+    p = profil_test()
 
     def accepte(self, lieu):
         return veille.lieu_accepte(lieu, self.p)
@@ -48,7 +48,7 @@ class Lieu(unittest.TestCase):
 
 
 class Theme(unittest.TestCase):
-    p = profil_exemple()
+    p = profil_test()
 
     def accepte(self, titre, description=""):
         return veille.theme_accepte(titre, description, self.p)
@@ -80,7 +80,7 @@ class Theme(unittest.TestCase):
 
 
 class Lecture(unittest.TestCase):
-    p = profil_exemple()
+    p = profil_test()
 
     def test_colle_et_coince(self):
         o = offre(description="Strong SQL skills. Spark is a plus.")

@@ -46,34 +46,45 @@ ENTETES = {"User-Agent": "radar-offres/0.1 (lecture des offres publiques)"}
 # 1. Les règles de tri (les listes viennent du profil, noté p)
 # ---------------------------------------------------------------------------
 
+def trouve(motifs, texte):
+    """Le premier motif (expression régulière) qui apparaît dans le texte, ou None."""
+    return next((m for m in motifs if re.search(m, texte)), None)
+
+
 def cherche(motifs, texte):
-    """Vrai si un des motifs (expressions régulières) apparaît dans le texte."""
-    return any(re.search(m, texte) for m in motifs)
+    """Vrai si un des motifs apparaît dans le texte."""
+    return trouve(motifs, texte) is not None
 
 
-def lieu_accepte(lieu, p):
-    """Un lieu du profil, un pays accepté sans autre ville, ou remote vers une zone acceptée.
+def pourquoi_lieu(lieu, p):
+    """(gardé ?, raison) : un lieu du profil, un lieu exact, ou remote vers une zone acceptée.
 
     Le lieu peut lister plusieurs endroits séparés par « / » : un seul suffit.
     """
     lieux = p["lieux"]
     for morceau in lieu.lower().split(" / "):
         morceau = morceau.strip()
-        if cherche([re.escape(m) for m in lieux["acceptes"]], morceau):
-            return True
+        ville = next((m for m in lieux["acceptes"] if m in morceau), None)
+        if ville:
+            return True, f"lieu « {ville} »"
         if morceau in lieux["exacts"]:
-            return True
+            return True, f"lieu exact « {morceau} »"
         # Remote : gardé s'il vise une zone acceptée, ou s'il ne nomme aucun pays.
         if "remote" in morceau or "télétravail" in morceau or "anywhere" in morceau:
-            if cherche([re.escape(m) for m in lieux["remote_zones"]], morceau):
-                return True
+            zone = next((m for m in lieux["remote_zones"] if m in morceau), None)
+            if zone:
+                return True, f"remote vers « {zone} »"
             if morceau in ("remote", "fully remote", "télétravail", "anywhere"):
-                return True
-    return False
+                return True, "remote sans pays"
+    return False, f"lieu hors profil (« {lieu or 'non précisé'} »)"
 
 
-def theme_accepte(titre, description, p):
-    """Le titre touche un thème, ou la description parle d'IA et du métier.
+def lieu_accepte(lieu, p):
+    return pourquoi_lieu(lieu, p)[0]
+
+
+def pourquoi_theme(titre, description, p):
+    """(gardé ?, raison) : le titre touche un thème, ou la description parle d'IA et du métier.
 
     Les postes d'ingénieur ne passent que si le titre les tourne vers le métier
     (themes.ingenieur_ok). Sans thème dans le titre, il faut un mot d'IA et au moins
@@ -81,15 +92,24 @@ def theme_accepte(titre, description, p):
     """
     t = p["themes"]
     titre = titre.lower()
-    if cherche(t["exclus_titre"], titre):
-        return False
+    exclu = trouve(t["exclus_titre"], titre)
+    if exclu:
+        return False, f"titre exclu par « {exclu} »"
     if re.search(t["ingenieur"], titre) and not cherche(t["ingenieur_ok"], titre):
-        return False
-    if cherche(t["titre"], titre):
-        return True
+        return False, "poste d'ingénieur sans mot de ingenieur_ok"
+    theme = trouve(t["titre"], titre)
+    if theme:
+        return True, f"titre « {theme} »"
     texte = description.lower()
-    mots_metier = sum(1 for m in t["metier"] if re.search(m, texte))
-    return cherche(t["ia"], texte) and mots_metier >= t["metier_minimum"]
+    mots_metier = [m for m in t["metier"] if re.search(m, texte)]
+    ia = trouve(t["ia"], texte)
+    if ia and len(mots_metier) >= t["metier_minimum"]:
+        return True, f"description : « {ia} » et {len(mots_metier)} mots du métier"
+    return False, "aucun thème dans le titre, description insuffisante"
+
+
+def theme_accepte(titre, description, p):
+    return pourquoi_theme(titre, description, p)[0]
 
 
 def annees_demandees(texte):
@@ -270,8 +290,10 @@ def lire_smartrecruiters(ident):
         for job in page["content"]:
             loc = job.get("location") or {}
             lieu = loc.get("fullLocation") or loc.get("city") or ""
+            # Le drapeau remote se colle au lieu, comme pour les autres ATS : « Tokyo (remote) »
+            # ne doit pas passer pour un « remote » sans pays.
             if loc.get("remote"):
-                lieu += " / remote"
+                lieu = f"{lieu} (remote)" if lieu else "remote"
             mode = "remote" if loc.get("remote") else "hybride" if loc.get("hybrid") else ""
             yield offre_vide(id=job["id"], titre=job["name"], lieu=lieu, mode=mode,
                              lien=f"https://jobs.smartrecruiters.com/{ident}/{job['id']}",

@@ -98,7 +98,8 @@ class Lecteurs(unittest.TestCase):
             offres = list(veille.lire_smartrecruiters("acme"))
         self.verifier_forme(offres)
         self.assertEqual(len(offres), 150)
-        self.assertEqual((offres[0]["lieu"], offres[0]["mode"]), ("Lyon, France / remote", "remote"))
+        self.assertEqual((offres[0]["lieu"], offres[0]["mode"]), ("Lyon, France (remote)", "remote"))
+        self.assertEqual(offres[1]["lieu"], "Lyon, France")
         self.assertEqual(offres[1]["mode"], "hybride")
 
     def test_smartrecruiters_detail_met_le_poste_avant_l_entreprise(self):

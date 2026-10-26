@@ -12,7 +12,7 @@ Python 3.11+, aucune dépendance, aucun compte, aucune donnée envoyée.
 
 ## Le problème
 
-Chercher un poste précis (par exemple « data marketing à Lyon », « IA et publicité à Paris ») sur
+Chercher un poste précis (par exemple « consultant SEA à Paris », « data marketing à Lyon ») sur
 les grands sites d'emploi, c'est :
 
 - **du bruit** : des centaines d'annonces sponsorisées, en double ou hors sujet ;
@@ -52,10 +52,12 @@ git clone https://github.com/Oenece/radar-offres.git
 cd radar-offres
 cp profil.exemple.toml profil.toml
 cp employeurs.exemple.csv employeurs.csv
-python veille.py
+python essai.py      # ce que le profil garde ou écarte, et pourquoi (ne modifie rien)
+python veille.py     # le passage : écrit les nouveautés et le tableau
 ```
 
-Le premier passage lit les employeurs d'exemple et écrit dans `donnees/` :
+Le profil d'exemple cherche du marketing d'acquisition (SEA, SEO, GEO, paid social) à Paris ou à
+Lyon, chez 13 employeurs d'exemple. Le premier passage écrit dans `donnees/` :
 
 | Fichier | Contenu |
 |---|---|
@@ -76,49 +78,35 @@ python tableau.py                                # refait seulement tableau.html
 Tes fichiers (`profil.toml`, `employeurs.csv`, `donnees/`) sont ignorés par git : tu peux garder
 le code à jour sans jamais publier ta recherche.
 
-## Adapter à ton profil
+## Adapter à ta recherche
 
-Tout se règle dans `profil.toml` ; le code ne contient aucun critère.
-[`profil.exemple.toml`](profil.exemple.toml) est commenté ligne par ligne.
+**→ [GUIDE.md](GUIDE.md)** explique tout pas à pas : brancher un employeur, choisir les lieux et
+les postes, écrire tes arguments, régler le score. Tout se règle dans `profil.toml` et
+`employeurs.csv` ; le code ne contient aucun critère.
 
-| Section | Ce qu'elle décide |
+| Section de `profil.toml` | Ce qu'elle décide |
 |---|---|
-| `[fichiers]` | où sont ta liste d'employeurs et ton dossier de données |
 | `[profil]` | ta devise, ta cible salariale, le seuil de salaire bas, tes années d'expérience |
-| `[lieux]` | les villes acceptées, les pays acceptés seuls, les zones de télétravail |
-| `[themes]` | les mots du titre qui gardent une offre, les exclusions, le traitement des postes d'ingénieur, et le repli sur la description |
-| `[[colle]]` | une règle par argument de ton parcours : un motif cherché dans l'offre, une étiquette, une phrase, un poids |
-| `[[coince]]` | une règle par écart avec ton profil, avec un poids négatif |
+| `[lieux]` | les villes acceptées, les lieux exacts, les zones de télétravail |
+| `[themes]` | les mots du titre qui gardent ou écartent une offre, les postes d'ingénieur, le repli sur la description |
+| `[[colle]]` / `[[coince]]` | tes arguments et tes écarts, cherchés dans chaque fiche, avec leur poids |
 | `[score]` | la base, les poids par défaut et les seuils de rareté |
 | `[alerte]` | la rareté à partir de laquelle une offre déclenche un e-mail |
 | `[a_la_main]` | les recherches à faire toi-même sur les sites protégés (APEC) |
+| `[fichiers]` | où sont ta liste d'employeurs et ton dossier de données |
 
-Les salaires affichés dans une autre devise que la tienne restent visibles, mais ne sont comparés
-ni à ta cible ni au seuil bas : la veille ne convertit pas les devises. Dans le tableau, la jauge
-de salaire s'étend de la moitié du bas de ta cible au double de son haut.
+`python essai.py` vérifie chaque réglage tout de suite, offre par offre :
 
-Les motifs sont des expressions régulières Python, cherchées en minuscules. Un motif faux est
-signalé au lancement, avec son nom.
+```
+Younited (lever, younited) : 7 offres, 2 gardée(s)
+   ✓  Growth Marketing Manager (F/H)   67 rare   lieu « paris » ; titre « growth (marketing|marketer|manager) »
+   ✓  Global Traffic Manager (F/H)     60 rare   lieu « paris » ; titre « traffic|trafic »
+```
 
-### Le score d'adéquation
-
-Le score part de `base` (40 par défaut) et ajoute ou retire des points :
-
-| Élément | Points par défaut |
-|---|---|
-| chaque raison « colle » | le `poids` de la règle, sinon +10 |
-| chaque raison « coince » | le `poids` de la règle, sinon −8 |
-| le titre touche un de tes thèmes | +10 |
-| la fourchette affichée atteint ta cible | +10 |
-| le maximum affiché est sous `salaire_bas` | −15 |
-| par année demandée au-delà de ton expérience | −3 |
-| remote ou hybride | +5 |
-
-Le total est borné entre 0 et 100, puis classé : peu commune à partir de 40, rare à 60, épique à
-75, légendaire à 90. Il n'y a aucun quota : une semaine sans offre légendaire est une semaine
-normale. Pour calibrer, lance une veille, ouvre le tableau, et regarde le détail « Pourquoi ce
-score » des offres que tu jugerais excellentes ou mauvaises ; ajuste les `poids` en conséquence.
-Le tableau recalcule tous les scores à chaque génération.
+Le score d'adéquation part de 40 et ajoute ou retire des points selon ce qui colle ou coince, le
+titre, le salaire, l'expérience demandée et le télétravail. Il donne la rareté : peu commune à
+partir de 40, rare à 60, épique à 75, légendaire à 90, sans aucun quota. Le détail et la méthode
+pour le calibrer sont dans le [guide](GUIDE.md#5-régler-le-score-et-la-rareté).
 
 ## Recevoir une alerte par e-mail
 
@@ -194,21 +182,17 @@ Bon à savoir : GitHub met en pause les workflows planifiés d'un dépôt public
 
 ## Ajouter un employeur
 
-Une ligne dans `employeurs.csv` : `nom,famille,ats,identifiant,note`. L'identifiant se lit dans
-l'adresse de la page carrière :
+Donne l'adresse de sa page carrière à l'outil d'essai : il reconnaît l'outil de recrutement
+(Ashby, Lever, Greenhouse, SmartRecruiters, Teamtailor), montre ce que ton profil garderait et te
+donne la ligne à coller dans `employeurs.csv`.
 
-| La page carrière ressemble à | `ats` | `identifiant` |
-|---|---|---|
-| `jobs.ashbyhq.com/acme` | `ashby` | `acme` |
-| `jobs.lever.co/acme` | `lever` | `acme` |
-| `boards.greenhouse.io/acme` ou `job-boards.greenhouse.io/acme` | `greenhouse` | `acme` |
-| `jobs.smartrecruiters.com/Acme1` | `smartrecruiters` | `Acme1` (respecter la casse) |
-| `acme.teamtailor.com` | `teamtailor` | `acme` |
-| une page maison qui liste des sous-pages d'offres | `page` | l'adresse complète |
-| aucun flux lisible | `manuel` | l'adresse, rappelée dans « à regarder à la main » |
+```bash
+python essai.py --url https://jobs.lever.co/acme
+```
 
-Une source en panne n'arrête pas le passage : elle est notée dans `passages.json` et dans le
-compte rendu.
+Les cas particuliers (adresse non reconnue, page maison, pas de flux) sont dans le
+[guide](GUIDE.md#1-brancher-un-employeur). Une source en panne n'arrête pas le passage : elle est
+notée dans `passages.json` et dans le compte rendu.
 
 ## Tests
 
@@ -218,7 +202,9 @@ python -m unittest discover tests
 
 Les tests tournent sans réseau : les lecteurs reçoivent de fausses réponses écrites sur le modèle
 de chaque API, et un passage complet tourne dans un dossier temporaire avec un faux ATS. Ils
-couvrent les filtres, la lecture des fiches, le score, la lecture du profil et ses erreurs.
+couvrent les filtres, la lecture des fiches, le score, l'outil d'essai, l'alerte, la lecture du
+profil et ses erreurs. Ils utilisent un profil fixe (`tests/profil_test.toml`) : tu peux modifier
+`profil.exemple.toml` sans les casser.
 
 ## Limites et bon usage
 
@@ -238,6 +224,7 @@ couvrent les filtres, la lecture des fiches, le score, la lecture du profil et s
 | `veille.py` | le passage : lecteurs ATS, filtres, lecture des fiches, mémoire, compte rendu |
 | `profil.py` | lecture et vérification de `profil.toml` |
 | `score.py` | le score d'adéquation et la rareté |
+| `essai.py` | ce que le profil garde ou écarte, et pourquoi ; reconnaît l'ATS d'une adresse |
 | `alerte.py` | l'e-mail des meilleures offres du dernier passage |
 | `salaire.py` | la mise en forme des fourchettes de salaire (« 60 à 100 k€ ») |
 | `tableau.py` | assemble `tableau.html` (modèle, styles, script et données en un seul fichier) |

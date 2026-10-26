@@ -1,11 +1,13 @@
-# Profil de recherche d'exemple : une personne en data / analytics marketing,
-# basée à Lyon, ouverte au télétravail en Europe.
+# Profil de recherche d'exemple : une personne en marketing d'acquisition
+# (SEA, SEO, GEO, paid social), à Paris ou à Lyon, ouverte au télétravail en France.
 #
-# Copier ce fichier en profil.toml, puis adapter chaque section.
-# Les motifs sont des expressions régulières Python, cherchées en minuscules :
-# entre apostrophes simples ('...'), la barre oblique inverse s'écrit telle quelle
-# (\b = limite de mot). Un motif qui contient une apostrophe s'écrit entre "..."
-# avec \\ à la place de \.
+# Pour l'adapter à ta recherche : copie ce fichier en profil.toml, puis change
+# chaque section. Le guide pas à pas est dans GUIDE.md, et `python essai.py`
+# montre tout de suite ce que tes réglages gardent ou écartent.
+#
+# Les motifs sont des expressions régulières Python, cherchées en minuscules.
+# Entre apostrophes simples ('...'), la barre oblique inverse s'écrit telle quelle
+# (\b = limite de mot : '\bseo\b' trouve « SEO » mais pas « seoul »).
 
 [fichiers]
 # Chemins relatifs à ce fichier.
@@ -14,48 +16,72 @@ donnees = 'donnees'             # où la veille écrit vus.json, passages.json, 
 
 [profil]
 devise = 'EUR'                  # la devise de tes salaires (EUR, GBP, USD, CHF…)
-salaire_cible = [45000, 55000]  # la fourchette visée, en brut annuel
-salaire_bas = 40000             # sous ce maximum affiché, l'offre reçoit « Salaire bas »
-annees_experience = 4           # tes années d'expérience
-annees_alerte = 7               # une offre qui en demande autant ou plus reçoit une alerte
+salaire_cible = [45000, 60000]  # la fourchette visée, en brut annuel
+salaire_bas = 38000             # sous ce maximum affiché, l'offre reçoit « Salaire bas »
+annees_experience = 5           # tes années d'expérience
+annees_alerte = 8               # une offre qui en demande autant ou plus reçoit une alerte
 
 [lieux]
 # Un de ces mots dans le lieu suffit.
-acceptes = ['lyon', 'villeurbanne', 'auvergne-rhône-alpes']
-# Lieux acceptés seulement s'ils sont écrits exactement ainsi (un pays sans ville, par exemple).
-exacts = ['france', 'fr', 'remote france', 'france (remote)']
+acceptes = ['paris', 'île-de-france', 'ile-de-france', 'lyon']
+# Lieux acceptés seulement s'ils sont écrits exactement ainsi.
+# (« France » seul n'y est pas : beaucoup d'offres listent leurs villes puis « France ».)
+exacts = ['remote france', 'france (remote)', 'télétravail']
 # Un poste en télétravail est gardé s'il vise une de ces zones (ou aucune).
-remote_zones = ['europe', 'emea', 'france']
+remote_zones = ['france', 'europe', 'emea']
 
 [themes]
 # Un de ces motifs dans le titre suffit à garder l'offre.
 titre = [
-  '\bdata\b',
-  'analytics',
-  'analyste?',
-  'marketing (science|analytics|ops)',
-  'measurement',
-  'insights?',
-  'growth',
+  '\bsea\b',
+  '\bsem\b',
+  '\bseo\b',
+  '\bgeo\b',
+  'référencement',
+  'paid (search|media|social|acquisition)',
+  'search (marketing|manager|specialist)',
+  'acquisition (manager|marketing|lead|specialist)',
+  'growth (marketing|marketer|manager)',
+  'performance (marketing|manager)',
+  'traffic|trafic',
+  'media buyer|acheteur média',
+  'digital marketing|marketing digital',
+  'online marketing|webmarketing',
+  'social ads|paid social',
+  'marketing manager',
+  'content (marketing|manager)',
+  'brand (manager|marketing)',
+  'lifecycle|crm marketing',
 ]
 # Les postes d'ingénieur ne sont gardés que si le titre contient aussi un mot de ingenieur_ok.
-ingenieur = 'engineer|ing[ée]nieur|developer|d[ée]veloppeur'
-ingenieur_ok = ['analytics', 'data', 'marketing']
+ingenieur = 'engineer|ing[ée]nieur|developer|d[ée]veloppeur|scientist'
+ingenieur_ok = ['seo', 'marketing']
 # Sans thème dans le titre : la description doit contenir un mot de « ia »
 # et au moins metier_minimum mots de « metier ».
-ia = ['\bai\b', '\bia\b', 'machine learning', '\bllm']
-metier = ['\bsql\b', 'dashboard', 'a/b test', 'attribution', 'bigquery', 'looker']
+ia = ['\bai\b', '\bia\b', '\bllm', 'chatgpt', 'genai']
+metier = ['google ads', '\bsea\b', '\bseo\b', 'paid media', 'meta ads', 'search console']
 metier_minimum = 2
 # Un de ces motifs dans le titre écarte l'offre, quoi qu'il arrive.
 exclus_titre = [
   '\bsales\b',
   'account executive',
+  'business develop',
+  '\bsdr\b',
+  '\bbdr\b',
   '\bintern\b',
   'internship',
   '\bstage\b',
+  'stagiaire',
   'alternan',
+  'apprenti',
+  'working student',
   'recruit',
+  'talent',
   'legal',
+  'designer',
+  'product manager',
+  'product lead',
+  'product director',
 ]
 
 [score]
@@ -80,44 +106,67 @@ rarete_min = 'epique'
 
 [a_la_main]
 # Recherches APEC à lancer soi-même (le site est protégé par un captcha). Laisser vide pour ne rien afficher.
-recherches_apec = ['data analyst marketing', 'analytics engineer']
+recherches_apec = ['SEA', 'SEO', 'acquisition marketing']
 
-# « Ce qui colle » : quand le motif apparaît dans l'offre, la phrase s'affiche.
-# Écrire des phrases sur ton parcours : ce sont tes arguments pour ce poste.
+# « Ce qui colle » : quand le motif apparaît dans l'offre, la phrase s'affiche
+# et le poids s'ajoute au score. Écris des phrases sur ton parcours : ce sont
+# tes arguments pour ce poste.
 [[colle]]
-motif = '\bsql\b|bigquery|snowflake'
-tag = 'SQL'
-texte = 'SQL au quotidien sur des entrepôts de données'
+motif = 'google ads|\bsea\b|\bsem\b|paid search|search ads'
+tag = 'SEA'
+texte = 'campagnes Google Ads pilotées de bout en bout'
 poids = 15                # ton point le plus fort : il pèse plus que les autres
 
 [[colle]]
-motif = 'dashboard|looker|tableau|power bi'
-tag = 'Dataviz'
-texte = 'tableaux de bord construits et maintenus pour des équipes marketing'
+motif = '\bseo\b|référencement naturel|search console|\bcrawl'
+tag = 'SEO'
+texte = 'SEO technique et éditorial, audits et suivi dans la Search Console'
+poids = 12
 
 [[colle]]
-motif = 'a/b test|experimentation|expérimentation'
-tag = 'Tests'
-texte = 'tests A/B conçus et analysés'
+motif = '\bgeo\b|generative engine|ai overviews|answer engine|visibilit[ée] (dans les|in) (llm|ia|ai)'
+tag = 'GEO'
+texte = 'veille et premiers tests sur la visibilité dans les moteurs génératifs'
+poids = 12
 
 [[colle]]
-motif = 'python|pandas'
-tag = 'Python'
-texte = 'Python pour l’analyse et l’automatisation'
+motif = 'meta ads|facebook ads|tiktok ads|linkedin ads|paid social'
+tag = 'Social ads'
+texte = 'campagnes social ads (Meta, LinkedIn)'
+
+[[colle]]
+motif = 'google analytics|\bga4\b|looker|tag manager|\bgtm\b'
+tag = 'Analytics'
+texte = 'GA4 et Tag Manager au quotidien, tableaux de bord dans Looker Studio'
+poids = 8
+
+[[colle]]
+motif = 'a/b test|cro\b|conversion rate'
+tag = 'CRO'
+texte = 'tests A/B sur des pages d’atterrissage'
+poids = 6
 
 # « Ce qui coince » : les écarts avec ton profil, à préparer avant de postuler.
 [[coince]]
-motif = 'spark|scala|kafka'
-tag = 'Big data'
-texte = 'outils big data pas encore pratiqués'
+motif = 'salesforce|hubspot|marketo|braze'
+tag = 'CRM'
+texte = 'outil CRM ou d’automatisation pas encore pratiqué'
+poids = -5
 
 [[coince]]
-motif = 'phd|doctorat'
-tag = 'Doctorat'
-texte = 'doctorat demandé'
-poids = -20               # presque rédhibitoire
+motif = 'javascript|python|\bsql\b'
+tag = 'Code'
+texte = 'compétences de code demandées'
+poids = -5
 
 [[coince]]
-motif = 'german|allemand|dutch|néerlandais'
+motif = 'german|allemand|spanish|espagnol|italian|italien|dutch|néerlandais'
 tag = 'Langue'
-texte = 'autre langue que l’anglais demandée'
+texte = 'autre langue que le français et l’anglais demandée'
+poids = -12
+
+[[coince]]
+motif = 'head of|director|directeur|directrice|\bvp\b'
+tag = 'Direction'
+texte = 'poste de direction, au-dessus du niveau visé'
+poids = -10

@@ -9,12 +9,13 @@ sys.dont_write_bytecode = True
 
 import profil  # noqa: E402
 
-PROFIL_EXEMPLE = RACINE / "profil.exemple.toml"
+PROFIL_EXEMPLE = RACINE / "profil.exemple.toml"   # le profil à copier, qui peut évoluer
+PROFIL_TEST = Path(__file__).resolve().parent / "profil_test.toml"   # le profil fixe des tests
 
 
-def profil_exemple():
-    """Le profil d'exemple du dépôt : les tests vérifient aussi qu'il reste cohérent."""
-    return profil.charger(PROFIL_EXEMPLE)
+def profil_test():
+    """Le profil fixe des tests (data analyst à Lyon)."""
+    return profil.charger(PROFIL_TEST)
 
 
 def offre(**champs):

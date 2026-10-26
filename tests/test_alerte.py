@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from outils import PROFIL_EXEMPLE
+from outils import PROFIL_TEST
 
 import alerte
 import profil
@@ -26,7 +26,7 @@ class Alerte(unittest.TestCase):
     def setUp(self):
         self.dossier = Path(tempfile.mkdtemp())
         self.addCleanup(shutil.rmtree, self.dossier)
-        shutil.copy(PROFIL_EXEMPLE, self.dossier / "profil.toml")
+        shutil.copy(PROFIL_TEST, self.dossier / "profil.toml")
         donnees = self.dossier / "donnees"
         donnees.mkdir()
         # Avec le profil d'exemple : base 40, titre +10, SQL +15, Dataviz +10, Python +10, remote +5.

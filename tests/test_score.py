@@ -108,7 +108,7 @@ class Score(unittest.TestCase):
         self.assertTrue(all(n["rarete"] == notes[0]["rarete"] for n in notes))
 
     def test_le_profil_exemple_se_note(self):
-        p = profil.charger(RACINE / "profil.exemple.toml")
+        p = profil.charger(RACINE / "tests" / "profil_test.toml")
         note = score.noter(offre(titre="Data Analyst", colle=[raison("SQL")], mode="remote"), p)
         self.assertEqual(note["score"], 40 + 10 + 15 + 5)
         self.assertEqual(note["rarete"], "rare")

@@ -15,7 +15,7 @@ from datetime import date
 from pathlib import Path
 from unittest import mock
 
-from outils import PROFIL_EXEMPLE, offre
+from outils import PROFIL_TEST, offre
 
 import profil
 import veille
@@ -28,7 +28,7 @@ class Dossier(unittest.TestCase):
         self.dossier = Path(tempfile.mkdtemp())
         self.addCleanup(shutil.rmtree, self.dossier)
         self.profil = self.dossier / "profil.toml"
-        shutil.copy(PROFIL_EXEMPLE, self.profil)
+        shutil.copy(PROFIL_TEST, self.profil)
 
     def ecrire_profil(self, ancien, nouveau):
         texte = self.profil.read_text(encoding="utf-8")
